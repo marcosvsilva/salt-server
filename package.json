@@ -1,0 +1,32 @@
+{
+  "name": "salt-shopping-list",
+  "version": "1.0.0",
+  "description": "SALT is a shopping list application that to be a code showcase with the following technologies:",
+  "main": "dist/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/server.js",
+    "dev": "npx nodemon dist/server.js",
+    "build": "tsc",
+    "build-list": "npm run lint && npm run build-dist",
+    "build-dist": "rimraf dist/* && rollup -c",
+    "knex:migrate:make": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:make --knexfile dist/database/knexfile.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.2.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "knex": "^2.4.2",
+    "mysql2": "^3.3.1",
+    "pg": "^8.11.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.40.0",
+    "nodemon": "^2.0.22"
+  }
+}
