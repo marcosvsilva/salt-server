@@ -5,8 +5,10 @@ dotenv.config();
 
 const PORT = Number(process.env.PORT || 9003);
 
-/* Start */
+/**
+ * Start
+ */
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`)
+  console.log(`🚀 Server running on port ${PORT}`);
 });

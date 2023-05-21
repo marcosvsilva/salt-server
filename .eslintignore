@@ -1,0 +1,21 @@
+# /node_modules/* in the project root is ignored by default
+# build artefacts
+dist/*
+coverage/*
+
+# data definition files
+**/*.d.ts
+
+# 3rd party libs
+/src/public/
+
+# custom definition files
+/src/types/
+public/*
+node_modules
+jest.config.js
+.eslintrc.js
+rollup.config.js
+rollup.config.mjs
+test/*
+swagger.js
