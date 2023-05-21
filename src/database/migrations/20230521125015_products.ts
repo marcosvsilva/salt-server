@@ -23,7 +23,7 @@ export async function up(knex: Knex): Promise<void> {
         // Controls
         table.dateTime(Products.mapping.createdAt).notNullable().defaultTo(knex.fn.now());
         table.dateTime(Products.mapping.updatedAt).notNullable().defaultTo(knex.fn.now());
-        });
+      });
     })
     .catch((error) => console.error(error));
 }

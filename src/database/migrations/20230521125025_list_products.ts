@@ -19,25 +19,29 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid(ListProducts.mapping.uuid).unique().notNullable();
 
         // References
-        table.integer(`${Products.table_name}_${Products.mapping.id}`)
-            .unsigned()
-            .references(Products.mapping.id)
-            .inTable(Products.table_name);
+        table
+          .integer(`${Products.table_name}_${Products.mapping.id}`)
+          .unsigned()
+          .references(Products.mapping.id)
+          .inTable(Products.table_name);
 
-        table.uuid(`${Products.table_name}_${Products.mapping.uuid}`)
-            .unsigned()
-            .references(Products.mapping.uuid)
-            .inTable(Products.table_name);
+        table
+          .uuid(`${Products.table_name}_${Products.mapping.uuid}`)
+          .unsigned()
+          .references(Products.mapping.uuid)
+          .inTable(Products.table_name);
 
-        table.integer(`${Lists.table_name}_${Lists.mapping.id}`)
-            .unsigned()
-            .references(Lists.mapping.id)
-            .inTable(Lists.table_name);
+        table
+          .integer(`${Lists.table_name}_${Lists.mapping.id}`)
+          .unsigned()
+          .references(Lists.mapping.id)
+          .inTable(Lists.table_name);
 
-        table.uuid(`${Lists.table_name}_${Lists.mapping.uuid}`)
-            .unsigned()
-            .references(Lists.mapping.uuid)
-            .inTable(Lists.table_name);
+        table
+          .uuid(`${Lists.table_name}_${Lists.mapping.uuid}`)
+          .unsigned()
+          .references(Lists.mapping.uuid)
+          .inTable(Lists.table_name);
 
         // Colums
         table.integer(ListProducts.mapping.status).notNullable;
@@ -46,7 +50,7 @@ export async function up(knex: Knex): Promise<void> {
         // Controls
         table.dateTime(ListProducts.mapping.createdAt).notNullable().defaultTo(knex.fn.now());
         table.dateTime(ListProducts.mapping.updatedAt).notNullable().defaultTo(knex.fn.now());
-        });
+      });
     })
     .catch((error) => console.error(error));
 }

@@ -18,15 +18,17 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid(Prices.mapping.uuid).unique().notNullable();
 
         // References
-        table.integer(`${Products.table_name}_${Products.mapping.id}`)
-            .unsigned()
-            .references(Products.mapping.id)
-            .inTable(Products.table_name);
+        table
+          .integer(`${Products.table_name}_${Products.mapping.id}`)
+          .unsigned()
+          .references(Products.mapping.id)
+          .inTable(Products.table_name);
 
-        table.uuid(`${Products.table_name}_${Products.mapping.uuid}`)
-            .unsigned()
-            .references(Products.mapping.uuid)
-            .inTable(Products.table_name);
+        table
+          .uuid(`${Products.table_name}_${Products.mapping.uuid}`)
+          .unsigned()
+          .references(Products.mapping.uuid)
+          .inTable(Products.table_name);
 
         // Colums
         table.datetime(Prices.mapping.date).notNullable;
@@ -35,7 +37,7 @@ export async function up(knex: Knex): Promise<void> {
         // Controls
         table.dateTime(Prices.mapping.createdAt).notNullable().defaultTo(knex.fn.now());
         table.dateTime(Prices.mapping.updatedAt).notNullable().defaultTo(knex.fn.now());
-        });
+      });
     })
     .catch((error) => console.error(error));
 }

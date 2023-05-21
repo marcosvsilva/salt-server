@@ -18,15 +18,17 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid(Lists.mapping.uuid).unique().notNullable();
 
         // References
-        table.integer(`${Users.table_name}_${Users.mapping.id}`)
-            .unsigned()
-            .references(Users.mapping.id)
-            .inTable(Users.table_name);
+        table
+          .integer(`${Users.table_name}_${Users.mapping.id}`)
+          .unsigned()
+          .references(Users.mapping.id)
+          .inTable(Users.table_name);
 
-        table.uuid(`${Users.table_name}_${Users.mapping.uuid}`)
-            .unsigned()
-            .references(Users.mapping.uuid)
-            .inTable(Users.table_name);
+        table
+          .uuid(`${Users.table_name}_${Users.mapping.uuid}`)
+          .unsigned()
+          .references(Users.mapping.uuid)
+          .inTable(Users.table_name);
 
         // Colums
         table.string(Lists.mapping.name);
@@ -38,7 +40,7 @@ export async function up(knex: Knex): Promise<void> {
         // Controls
         table.dateTime(Lists.mapping.createdAt).notNullable().defaultTo(knex.fn.now());
         table.dateTime(Lists.mapping.updatedAt).notNullable().defaultTo(knex.fn.now());
-        });
+      });
     })
     .catch((error) => console.error(error));
 }
