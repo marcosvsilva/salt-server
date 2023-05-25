@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import knex from '../database';
 import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
+import knex from '../database';
 import Lists from '../database/entitites/lists';
 
 const selectColumns = [
