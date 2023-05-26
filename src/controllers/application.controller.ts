@@ -1,9 +1,10 @@
 import { DatabaseTable, Entity } from '../database/entitites/database';
 import { Request, Response } from 'express';
+import { MissingRequestBodyException } from '../exceptions';
 import { Knex } from 'knex';
 
 import knex from '../database';
-import { addIdentifiers, addTimestamps, deserialize, filterParams } from '../utils';
+import { addIdentifiers, addTimestamps, deserialize, filterParams, isEmpty } from '../utils';
 
 type Ref = Knex.Ref<
   string,
@@ -93,6 +94,10 @@ export async function baseCreate({
   doDeserialize = false,
   emptyResponse = false,
 }: BaseCreateParameters): Promise<Response | void> {
+  if (!req.body) {
+    throw new MissingRequestBodyException();
+  }
+
   let params = filterParams(req.body, entity);
   params = addIdentifiers(params, entity);
   params = addTimestamps(params, entity, 'create');
