@@ -31,7 +31,6 @@ export async function show(req: Request, res: Response): Promise<Response> {
  * @route POST /api/users
  */
 export async function create(req: Request, res: Response): Promise<Response | void> {
-  console.log(req);
   return baseCreate({ req, res, entity: Users, selectColumns, doDeserialize: true });
 }
 
