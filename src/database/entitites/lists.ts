@@ -1,4 +1,5 @@
 import { DatabaseTable, Entity, SchemaMapping } from './database';
+import Users from './users';
 
 export enum StatusList {
   Create = 0,
@@ -50,7 +51,8 @@ const Lists: Entity<List> = {
   table_name: 'Lists',
   column: listColumns,
   mapping: listMapping,
-  allowed: [listColumns.name, listColumns.status],
+  reference: [Users],
+  allowed: [listColumns.name, listColumns.status, listColumns.total_list, listColumns.discount, listColumns.date_completed],
 };
 
 export default Lists;

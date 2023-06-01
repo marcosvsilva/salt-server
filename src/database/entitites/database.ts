@@ -15,6 +15,9 @@ export type Entity<T> = {
   // Database-level column names
   mapping: SchemaMapping<T>;
 
+  // References
+  reference?: Array<Entity<DatabaseTable>>;
+
   // JSON columns
   json?: string[];
 

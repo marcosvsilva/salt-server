@@ -4,7 +4,7 @@ import { MissingRequestBodyException } from '../exceptions';
 import { Knex } from 'knex';
 
 import knex from '../database';
-import { addIdentifiers, addTimestamps, deserialize, filterParams, isEmpty } from '../utils';
+import { addIdentifiers, addTimestamps, deserialize, filterParams, formatReferenceFieldId, formatReferenceFieldUUId, isEmpty } from '../utils';
 
 type Ref = Knex.Ref<
   string,
@@ -95,12 +95,48 @@ export async function baseCreate({
   emptyResponse = false,
 }: BaseCreateParameters): Promise<Response | void> {
   if (!req.body) {
-    throw new MissingRequestBodyException();
+    return res.sendStatus(400).end();
   }
 
   let params = filterParams(req.body, entity);
   params = addIdentifiers(params, entity);
   params = addTimestamps(params, entity, 'create');
+
+  if ((entity.reference) && (entity.reference?.length > 0)) {
+    let missingValues = false;
+      
+    entity.reference.forEach(async element => {
+      if (!missingValues) {
+        const field = formatReferenceFieldUUId(element);
+        const uuid = req.body[field];
+        missingValues = isEmpty(uuid);
+
+        if (!missingValues) {
+          const selectColumns = [
+            knex.ref(entity.mapping.id).as(entity.column.id),
+          ];
+
+          await knex.select(selectColumns)
+            .from(element.table_name)
+            .where(element.mapping.uuid, uuid)
+            .limit(1)
+            .first()
+            .then((entry) => {
+              params[field] = uuid;
+              params[formatReferenceFieldId(element)] = entry[entity.mapping.id];    
+            })
+            .catch((error: Error) => {
+              console.error(error);
+              return res.sendStatus(500);
+          });
+        }
+      }
+    })
+
+    if (missingValues) {
+      return res.sendStatus(400).end();
+    }
+  }
 
   if (emptyResponse) {
     return knex

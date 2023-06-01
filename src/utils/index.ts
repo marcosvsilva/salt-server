@@ -75,28 +75,6 @@ export const addTimestamps = (
   return object;
 };
 
-export const uuidToId = async (
-  entity: Entity<DatabaseTable>,
-  uuid: string,
-): Promise<number | null> => {
-  return knex
-    .select(entity.mapping.id)
-    .from(entity.mapping)
-    .where(entity.mapping.uuid, uuid)
-    .limit(1)
-    .first()
-    .then((data: Record<string, number>) => {
-      if (data) {
-        return data[entity.mapping.id];
-      }
-      return null;
-    })
-    .catch((error) => {
-      console.error(error);
-      return null;
-    });
-};
-
 export function cast(entry: DatabaseTable, entity: Entity<DatabaseTable>): DatabaseTable {
   return Object.keys(entry).reduce((_obj, key) => {
     const obj = { ..._obj };
@@ -130,31 +108,6 @@ export const deserialize = (
   return _data;
 };
 
-export const uuidToObject = async (
-  entity: Entity<DatabaseTable>,
-  uuid: string,
-): Promise<JsonObject | null> => {
-  const selectColumns = Object.keys(entity.mapping).map((key) =>
-    knex.ref(entity.mapping[key]).as(entity.column[key]),
-  );
-  return knex
-    .select(selectColumns)
-    .from(entity.table_name)
-    .where(entity.mapping.uuid, uuid)
-    .limit(1)
-    .first()
-    .then((item) => {
-      if (item) {
-        return deserialize(item, entity) as unknown as JsonObject;
-      }
-      return null;
-    })
-    .catch((error) => {
-      console.error(error);
-      return null;
-    });
-};
-
 export const isEmpty = (
   varX: JsonObject | JsonArray | string | number | boolean | undefined,
 ): boolean => {
@@ -174,8 +127,12 @@ export const isEmpty = (
   return false;
 };
 
-export function capitalize(word: string): string {
-  return word[0].toUpperCase() + word.slice(1).toLowerCase();
+export function formatReferenceFieldId(entity: Entity<DatabaseTable>): string {
+  return `${entity.table_name.toLowerCase()}_${entity.mapping.id.toLowerCase()}`;
+}
+
+export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
+  return `${entity.table_name.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
 }
 
 export function getEnumByValue<T extends string | number>(

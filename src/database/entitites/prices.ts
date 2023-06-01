@@ -1,4 +1,5 @@
 import { DatabaseTable, Entity, SchemaMapping } from './database';
+import Products from './products';
 
 export interface Price extends DatabaseTable {
   date: Date;
@@ -34,7 +35,8 @@ const Prices: Entity<Price> = {
   table_name: 'Prices',
   column: priceColumns,
   mapping: priceMapping,
-  allowed: [priceColumns.date],
+  reference: [Products],
+  allowed: [priceColumns.date, priceColumns.price],
 };
 
 export default Prices;
