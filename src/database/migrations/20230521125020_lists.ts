@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { formatReferenceFieldId, formatReferenceFieldUUId } from '../../utils';
 import Lists from '../entitites/lists';
 import Users from '../entitites/users';
 
@@ -19,16 +20,18 @@ export async function up(knex: Knex): Promise<void> {
 
         // References
         table
-          .integer(`${Users.table_name}_${Users.mapping.id}`)
+          .integer(formatReferenceFieldId(Users))
           .unsigned()
           .references(Users.mapping.id)
-          .inTable(Users.table_name);
+          .inTable(Users.table_name)
+          .notNullable;
 
         table
-          .uuid(`${Users.table_name}_${Users.mapping.uuid}`)
+          .uuid(formatReferenceFieldUUId(Users))
           .unsigned()
           .references(Users.mapping.uuid)
-          .inTable(Users.table_name);
+          .inTable(Users.table_name)
+          .notNullable();
 
         // Colums
         table.string(Lists.mapping.name);

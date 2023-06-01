@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { formatReferenceFieldId, formatReferenceFieldUUId } from '../../utils';
 import ListProducts from '../entitites/list_products';
 import Products from '../entitites/products';
 import Lists from '../entitites/lists';
@@ -20,28 +21,32 @@ export async function up(knex: Knex): Promise<void> {
 
         // References
         table
-          .integer(`${Products.table_name}_${Products.mapping.id}`)
+          .integer(formatReferenceFieldId(Products))
           .unsigned()
           .references(Products.mapping.id)
-          .inTable(Products.table_name);
+          .inTable(Products.table_name)
+          .notNullable();
 
         table
-          .uuid(`${Products.table_name}_${Products.mapping.uuid}`)
+          .uuid(formatReferenceFieldUUId(Products))
           .unsigned()
           .references(Products.mapping.uuid)
-          .inTable(Products.table_name);
+          .inTable(Products.table_name)
+          .notNullable();
 
         table
-          .integer(`${Lists.table_name}_${Lists.mapping.id}`)
+          .integer(formatReferenceFieldId(Lists))
           .unsigned()
           .references(Lists.mapping.id)
-          .inTable(Lists.table_name);
+          .inTable(Lists.table_name)
+          .notNullable();
 
         table
-          .uuid(`${Lists.table_name}_${Lists.mapping.uuid}`)
+          .uuid(formatReferenceFieldUUId(Lists))
           .unsigned()
           .references(Lists.mapping.uuid)
-          .inTable(Lists.table_name);
+          .inTable(Lists.table_name)
+          .notNullable();
 
         // Colums
         table.integer(ListProducts.mapping.status).notNullable;
