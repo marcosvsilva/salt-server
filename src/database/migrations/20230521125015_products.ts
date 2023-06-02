@@ -18,7 +18,7 @@ export async function up(knex: Knex): Promise<void> {
 
         // Colums
         table.string(Products.mapping.name).notNullable;
-        table.integer(Products.mapping.description);
+        table.string(Products.mapping.description);
 
         // Controls
         table.dateTime(Products.mapping.createdAt).notNullable().defaultTo(knex.fn.now());
