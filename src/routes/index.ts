@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from 'express';
 import * as listsController from '../controllers/lists.controller';
 import * as usersController from '../controllers/users.controller';
 import * as pricesController from '../controllers/prices.controller';
+import * as productsController from '../controllers/products.controller';
 
 const router: Router = express.Router();
 
@@ -24,6 +25,16 @@ router.get('/api/users/:uuid', usersController.show);
 router.post('/api/users', usersController.create);
 router.put('/api/users/:uuid', usersController.update);
 router.delete('/api/users/:uuid', usersController.remove);
+
+/**
+ * Products
+ */
+
+router.get('/api/products', productsController.index);
+router.get('/api/products/:uuid', productsController.show);
+router.post('/api/products', productsController.create);
+router.put('/api/products/:uuid', productsController.update);
+router.delete('/api/products/:uuid', productsController.remove);
 
 /**
  * Prices
