@@ -1,10 +1,9 @@
 import { DatabaseTable, Entity } from '../database/entitites/database';
 import { Request, Response } from 'express';
-import { MissingRequestBodyException } from '../exceptions';
 import { Knex } from 'knex';
-
-import knex from '../database';
+import { JsonObject, JsonValue } from 'type-fest';
 import { addIdentifiers, addTimestamps, deserialize, filterParams, formatReferenceFieldId, formatReferenceFieldUUId, isEmpty } from '../utils';
+import knex from '../database';
 
 type Ref = Knex.Ref<
   string,
@@ -12,6 +11,51 @@ type Ref = Knex.Ref<
     [x: string]: string;
   }
 >[];
+
+/**
+ * GetByID
+ *
+ */
+async function getByID(
+  selectColumns: Ref,
+  tableName: string,
+  idField: string,
+  idValue: string,
+): Promise<any> {
+  return knex
+    .select(selectColumns)
+    .from(tableName)
+    .where(idField, idValue)
+    .limit(1)
+    .first()
+    .then((entry) => {
+      return entry;    
+    })
+    .catch((error: Error) => {
+      console.log(error)
+      return null;  
+    });
+}
+
+/**
+ * GetByAll
+ *
+ */
+async function getAll(
+  selectColumns: Ref,
+  tableName: string,
+): Promise<any> {
+  return knex
+    .select(selectColumns)
+    .from(tableName)
+    .then((entries) => {
+      return entries;
+    })
+    .catch((error: Error) => {
+      console.error(error);
+      return null;
+    });
+}
 
 /**
  * Index
@@ -23,19 +67,14 @@ export async function baseIndex(
   selectColumns: Ref,
   doDeserialize = false,
 ): Promise<Response> {
-  return knex
-    .select(selectColumns)
-    .from(entity.table_name)
-    .then((entries) => {
-      if (doDeserialize) {
-        return res.json(deserialize(entries, entity));
-      }
-      return res.json(entries);
-    })
-    .catch((error: Error) => {
-      console.error(error);
-      return res.sendStatus(500);
-    });
+  const entry = await getAll(selectColumns, entity.table_name);
+  if (entry) {
+    if (doDeserialize) {
+      return res.json(deserialize(entry, entity));
+    }
+    return res.json(entry);
+  }
+  return res.sendStatus(500);
 }
 
 /**
@@ -50,25 +89,14 @@ export async function baseShow(
   selectColumns: Ref,
   doDeserialize = false,
 ): Promise<Response> {
-  return knex
-    .select(selectColumns)
-    .from(entity.table_name)
-    .where(entity.mapping.uuid, req.params.uuid)
-    .limit(1)
-    .first()
-    .then((entry) => {
-      if (entry) {
-        if (doDeserialize) {
-          return res.json(deserialize(entry, entity));
-        }
-        return res.json(entry);
-      }
-      return res.sendStatus(400);
-    })
-    .catch((error: Error) => {
-      console.error(error);
-      return res.sendStatus(500);
-    });
+  const entry = await getByID(selectColumns, entity.table_name, entity.mapping.uuid, req.params.uuid);
+  if (entry) {
+    if (doDeserialize) {
+      return res.json(deserialize(entry, entity));
+    }
+    return res.json(entry);
+  }
+  return res.sendStatus(500);
 }
 
 /**
@@ -84,6 +112,44 @@ interface BaseCreateParameters {
   selectColumns?: Ref;
   doDeserialize?: boolean;
   emptyResponse?: boolean;
+}
+
+async function checkReferenceFields(
+  req: Request,
+  res: Response,
+  entity: Entity<DatabaseTable>,
+  params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
+): Promise<void> {
+  if ((entity.reference) && (entity.reference?.length > 0)) {
+    let missingValues = false;
+    
+    await Promise.all(entity.reference.map(async element => {
+      if (!missingValues) {
+        const field = formatReferenceFieldUUId(element);
+        const uuid = req.body[field];
+        missingValues = isEmpty(uuid);
+
+        if (!missingValues) {
+          const selectColumns = [
+            knex.ref(entity.mapping.id).as(entity.column.id),
+          ];
+          
+          const entry = await getByID(selectColumns, element.table_name, entity.mapping.uuid, uuid);
+          if (entry) {
+            params[field] = uuid;
+            params[formatReferenceFieldId(element)] = entry[entity.mapping.id];
+          } else {
+            return res.sendStatus(500).end();
+          }
+        }
+      }
+    }));
+    
+    if (missingValues) {
+      console.error('References fields not found')
+      return res.sendStatus(400).end();
+    }
+  }
 }
 
 export async function baseCreate({
@@ -102,41 +168,7 @@ export async function baseCreate({
   params = addIdentifiers(params, entity);
   params = addTimestamps(params, entity, 'create');
 
-  if ((entity.reference) && (entity.reference?.length > 0)) {
-    let missingValues = false;
-      
-    entity.reference.forEach(async element => {
-      if (!missingValues) {
-        const field = formatReferenceFieldUUId(element);
-        const uuid = req.body[field];
-        missingValues = isEmpty(uuid);
-
-        if (!missingValues) {
-          const selectColumns = [
-            knex.ref(entity.mapping.id).as(entity.column.id),
-          ];
-
-          await knex.select(selectColumns)
-            .from(element.table_name)
-            .where(element.mapping.uuid, uuid)
-            .limit(1)
-            .first()
-            .then((entry) => {
-              params[field] = uuid;
-              params[formatReferenceFieldId(element)] = entry[entity.mapping.id];    
-            })
-            .catch((error: Error) => {
-              console.error(error);
-              return res.sendStatus(500);
-          });
-        }
-      }
-    })
-
-    if (missingValues) {
-      return res.sendStatus(400).end();
-    }
-  }
+  await checkReferenceFields(req, res, entity, params);
 
   if (emptyResponse) {
     return knex
