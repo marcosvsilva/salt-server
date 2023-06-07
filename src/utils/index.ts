@@ -5,10 +5,12 @@ import uuidv6 from 'uuid-with-v6';
 import knex from '../database';
 
 function processKeys(
-  object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
+  _object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> {
-  return Object.keys(object)
+  let object = { ..._object };
+
+  object = Object.keys(_object)
     .filter((key) => entity.allowed.includes(key))
     .reduce((acc, key) => {
       let value: JsonValue | Knex.Raw | Buffer | undefined;
@@ -26,7 +28,17 @@ function processKeys(
       acc[entity.mapping[key]] = value;
 
       return acc;
-    }, {});
+  }, {});
+
+  // References
+  if (entity.reference && _object) {
+    entity.reference.map(ent => {
+      const field = formatReferenceFieldUUId(ent);
+      object[formatReferenceFieldUUId(ent)] = _object[field];
+    })
+  }
+
+  return object
 }
 
 export const filterParams = (

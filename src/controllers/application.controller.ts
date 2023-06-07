@@ -120,28 +120,13 @@ async function checkReferenceFields(
   entity: Entity<DatabaseTable>,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
 ): Promise<void> {
-  if ((entity.reference) && (entity.reference?.length > 0)) {
+  if (entity.reference && params) {
     let missingValues = false;
     
-    await Promise.all(entity.reference.map(async element => {
+    await Promise.all(entity.reference.map(async ent => {
       if (!missingValues) {
-        const field = formatReferenceFieldUUId(element);
-        const uuid = req.body[field];
-        missingValues = isEmpty(uuid);
-
-        if (!missingValues) {
-          const selectColumns = [
-            knex.ref(entity.mapping.id).as(entity.column.id),
-          ];
-          
-          const entry = await getByID(selectColumns, element.table_name, entity.mapping.uuid, uuid);
-          if (entry) {
-            params[field] = uuid;
-            params[formatReferenceFieldId(element)] = entry[entity.mapping.id];
-          } else {
-            return res.sendStatus(500).end();
-          }
-        }
+        const field = formatReferenceFieldUUId(ent) || '';
+        missingValues = isEmpty(params[formatReferenceFieldUUId(ent)] as string);
       }
     }));
     
