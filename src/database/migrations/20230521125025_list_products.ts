@@ -21,24 +21,10 @@ export async function up(knex: Knex): Promise<void> {
 
         // References
         table
-          .integer(formatReferenceFieldId(Products))
-          .unsigned()
-          .references(Products.mapping.id)
-          .inTable(Products.table_name)
-          .notNullable();
-
-        table
           .uuid(formatReferenceFieldUUId(Products))
           .unsigned()
           .references(Products.mapping.uuid)
           .inTable(Products.table_name)
-          .notNullable();
-
-        table
-          .integer(formatReferenceFieldId(Lists))
-          .unsigned()
-          .references(Lists.mapping.id)
-          .inTable(Lists.table_name)
           .notNullable();
 
         table

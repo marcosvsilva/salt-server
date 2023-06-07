@@ -20,13 +20,6 @@ export async function up(knex: Knex): Promise<void> {
 
         // References
         table
-          .integer(formatReferenceFieldId(Products))
-          .unsigned()
-          .references(Products.mapping.id)
-          .inTable(Products.table_name)
-          .notNullable();
-
-        table
           .uuid(formatReferenceFieldUUId(Products))
           .unsigned()
           .references(Products.mapping.uuid)
