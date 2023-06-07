@@ -52,7 +52,11 @@ const Lists: Entity<List> = {
   column: listColumns,
   mapping: listMapping,
   reference: [Users],
-  allowed: [listColumns.name, listColumns.status, listColumns.total_list, listColumns.discount, listColumns.date_completed],
+  allowed: [listColumns.name,
+            listColumns.status,
+            listColumns.total_list,
+            listColumns.discount,
+            listColumns.date_completed],
 };
 
 export default Lists;

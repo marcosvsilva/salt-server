@@ -34,7 +34,8 @@ const Products: Entity<Product> = {
   table_name: 'Products',
   column: productColumns,
   mapping: productMapping,
-  allowed: [productColumns.name, productColumns.description],
+  allowed: [productColumns.name,
+            productColumns.description],
 };
 
 export default Products;

@@ -36,7 +36,8 @@ const Prices: Entity<Price> = {
   column: priceColumns,
   mapping: priceMapping,
   reference: [Products],
-  allowed: [priceColumns.date, priceColumns.price],
+  allowed: [priceColumns.date,
+            priceColumns.price],
 };
 
 export default Prices;

@@ -37,7 +37,9 @@ const Users: Entity<User> = {
   table_name: 'Users',
   column: userColumns,
   mapping: userMaping,
-  allowed: [userColumns.name, userColumns.user_name, userColumns.password],
+  allowed: [userColumns.name,
+            userColumns.user_name,
+            userColumns.password],
 };
 
 export default Users;

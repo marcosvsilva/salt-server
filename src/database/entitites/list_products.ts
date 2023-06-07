@@ -43,7 +43,8 @@ const ListProducts: Entity<ListProduct> = {
   column: listProductColumns,
   mapping: listProductMapping,
   reference: [Products, Lists],
-  allowed: [listProductColumns.date, listProductColumns.status],
+  allowed: [listProductColumns.date,
+            listProductColumns.status],
 };
 
 export default ListProducts;
