@@ -2,7 +2,7 @@ import { DatabaseTable, Entity } from '../database/entitites/database';
 import { Request, Response } from 'express';
 import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
-import { addIdentifiers, addTimestamps, deserialize, filterParams, formatReferenceFieldId, formatReferenceFieldUUId, isEmpty } from '../utils';
+import { addIdentifiers, addTimestamps, deserialize, filterParams, formatReferenceFieldUUId, isEmpty } from '../utils';
 import knex from '../database';
 
 type Ref = Knex.Ref<
