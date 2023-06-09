@@ -21,7 +21,7 @@ async function getByID(
   tableName: string,
   idField: string,
   idValue: string,
-): Promise<any> {
+): Promise<Response | void> {
   return knex
     .select(selectColumns)
     .from(tableName)
@@ -44,7 +44,7 @@ async function getByID(
 async function getAll(
   selectColumns: Ref,
   tableName: string,
-): Promise<any> {
+): Promise<Response | void> {
   return knex
     .select(selectColumns)
     .from(tableName)
@@ -114,27 +114,28 @@ interface BaseCreateParameters {
   emptyResponse?: boolean;
 }
 
-async function checkReferenceFields(
+async function referenceFieldsIsValid(
   req: Request,
   res: Response,
   entity: Entity<DatabaseTable>,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-): Promise<void> {
+): Promise<boolean> {
+  let missingValues = true;
+
   if (entity.reference && params) {
-    let missingValues = false;
-    
     await Promise.all(entity.reference.map(async ent => {
-      if (!missingValues) {
+      if (missingValues) {
         const field = formatReferenceFieldUUId(ent) || '';
-        missingValues = isEmpty(params[formatReferenceFieldUUId(ent)] as string);
+        missingValues = !isEmpty(params[formatReferenceFieldUUId(ent)] as string);
       }
     }));
     
-    if (missingValues) {
+    if (!missingValues) {
       console.error('References fields not found')
-      return res.sendStatus(400).end();
     }
   }
+
+  return missingValues;
 }
 
 export async function baseCreate({
@@ -153,8 +154,11 @@ export async function baseCreate({
   params = addIdentifiers(params, entity);
   params = addTimestamps(params, entity, 'create');
 
-  await checkReferenceFields(req, res, entity, params);
-
+  const checkReferences = await referenceFieldsIsValid(req, res, entity, params);
+  if (!checkReferences) {
+    return res.sendStatus(400).end();
+  }
+  
   if (emptyResponse) {
     return knex
       .insert(params)
