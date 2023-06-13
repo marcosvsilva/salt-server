@@ -28,7 +28,7 @@ function processKeys(
       acc[entity.mapping[key]] = value;
 
       return acc;
-  }, {});
+    }, {});
 
   // References
   if (entity.reference && _object) {
@@ -140,11 +140,11 @@ export const isEmpty = (
 };
 
 export function formatReferenceFieldId(entity: Entity<DatabaseTable>): string {
-  return `${entity.table_name.toLowerCase()}_${entity.mapping.id.toLowerCase()}`;
+  return `${entity.table_name.toLowerCase()}_${entity.column.id.toLowerCase()}`;
 }
 
 export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
-  return `${entity.table_name.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
+  return `${entity.table_name.toLowerCase()}_${entity.column.uuid.toLowerCase()}`;
 }
 
 export function getEnumByValue<T extends string | number>(
