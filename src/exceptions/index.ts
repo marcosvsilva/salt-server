@@ -1,13 +1,20 @@
-export class MissingRequestBodyException extends Error {
-    constructor() {
-        super('Request body is missing or empty');
-        this.name = 'MissingRequestBodyException';
-    }
+export class MissingParamsException extends Error {
+  constructor() {
+    super('Required params are missing or empty');
+    this.name = 'MissingParamsException';
+  }
 }
 
-export class MissingFieldsException extends Error {
-    constructor() {
-        super('Required fields are missing');
-        this.name = 'MissingFieldsException';
-    }
+export class MissingReferencesFieldsException extends Error {
+  constructor() {
+    super('Required reference fields are missing');
+    this.name = 'MissingReferencesFieldsException';
+  }
+}
+
+export class MissingIdException extends Error {
+  constructor() {
+    super('Required UUid field are missing');
+    this.name = 'MissingIdException';
+  }
 }
