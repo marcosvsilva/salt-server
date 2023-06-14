@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
+
 import knex from '../database';
 import Prices from '../database/entitites/prices';
+import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 const selectColumns = [
   knex.ref(Prices.mapping.uuid).as(Prices.column.uuid),
@@ -15,7 +16,7 @@ const selectColumns = [
  * @route GET /api/prices
  */
 export async function index(req: Request, res: Response): Promise<Response> {
-  return baseIndex(req, res, Prices, selectColumns, true);
+  return baseIndex(res, Prices, selectColumns);
 }
 
 /**
@@ -23,14 +24,14 @@ export async function index(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function show(req: Request, res: Response): Promise<Response> {
-  return baseShow(req, res, Prices, selectColumns, true);
+  return baseShow(res, req.params.uuid, Prices, selectColumns);
 }
 
 /**
  * @route POST /api/prices
  */
 export async function create(req: Request, res: Response): Promise<Response | void> {
-  return baseCreate({ req, res, entity: Prices, selectColumns, doDeserialize: true });
+  return baseCreate(res, req.body, Prices, selectColumns);
 }
 
 /**
@@ -38,7 +39,7 @@ export async function create(req: Request, res: Response): Promise<Response | vo
  * @param {string} uuid
  */
 export async function update(req: Request, res: Response): Promise<Response> {
-  return baseUpdate(req, res, Prices, selectColumns, true);
+  return baseUpdate(res, req.params.uuid, req.body, Prices, selectColumns);
 }
 
 /**
@@ -46,5 +47,5 @@ export async function update(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function remove(req: Request, res: Response): Promise<Response | void> {
-  return baseRemove(req, res, Prices);
+  return baseRemove(res, req.params.uuid, req.body, Prices);
 }

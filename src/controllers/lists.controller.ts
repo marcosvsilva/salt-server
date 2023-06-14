@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
-import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
+import { JsonObject } from 'type-fest';
+
 import knex from '../database';
-import Lists from '../database/entitites/lists';
+import ListProducts from '../database/entitites/list_products';
+import Lists, { StatusList } from '../database/entitites/lists';
+import Products from '../database/entitites/products';
+import { formatReferenceFieldUUId, isEmpty } from '../utils';
+import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 const selectColumns = [
   knex.ref(Lists.mapping.uuid).as(Lists.column.uuid),
@@ -14,11 +19,19 @@ const selectColumns = [
   knex.ref(Lists.mapping.updatedAt).as(Lists.column.updatedAt),
 ];
 
+const selectColumnsListProducts = [
+  knex.ref(ListProducts.mapping.uuid).as(ListProducts.column.uuid),
+  knex.ref(ListProducts.mapping.date).as(ListProducts.column.date),
+  knex.ref(ListProducts.mapping.status).as(ListProducts.column.status),
+  knex.ref(ListProducts.mapping.createdAt).as(ListProducts.column.createdAt),
+  knex.ref(ListProducts.mapping.updatedAt).as(ListProducts.column.updatedAt),
+];
+
 /**
  * @route GET /api/lists
  */
 export async function index(req: Request, res: Response): Promise<Response> {
-  return baseIndex(req, res, Lists, selectColumns, true);
+  return baseIndex(res, Lists, selectColumns);
 }
 
 /**
@@ -26,14 +39,49 @@ export async function index(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function show(req: Request, res: Response): Promise<Response> {
-  return baseShow(req, res, Lists, selectColumns, true);
+  return baseShow(res, req.params.uuid, Lists, selectColumns);
 }
 
 /**
  * @route POST /api/lists
  */
 export async function create(req: Request, res: Response): Promise<Response | void> {
-  return baseCreate({ req, res, entity: Lists, selectColumns, doDeserialize: true });
+  // if (req.body) {
+  //   let resCreateLists: JsonObject = {};
+  //   await baseCreate(req.body, res, Lists, selectColumns, resCreateLists, false, true);
+
+  //   if (!isEmpty(resCreateLists)) {
+  //     const valueListUUID = resCreateLists.body ? resCreateLists.body['uuid'] : '';
+
+  //     await Array.from(req.body['products']).map(async (prod) => {
+  //       const form: JsonObject = {
+  //         [formatReferenceFieldUUId(Lists)]: valueListUUID,
+  //         [formatReferenceFieldUUId(Products)]: prod as string,
+  //         date: new Date().toJSON(),
+  //         status: StatusList.Create,
+  //       };
+  //       console.log(form);
+
+  //       const resCreateProduct: JsonObject = {};
+  //       await baseCreate(form, res, ListProducts, selectColumnsListProducts, resCreateProduct, false, true);
+  //       if (!isEmpty(resCreateProduct)) {
+  //         console.log(`product ${prod as string} link on list ${valueListUUID}`)
+  //       }
+  //       else {
+  //         console.error(`error link product: ${prod as string} in list ${valueListUUID}`)
+  //       }
+  //       console.log('pass final loop');
+
+  //       return res.statusCode(201).json(resCreateLists);
+  //     });
+
+  //     return res.sendStatus(205).json(resJson);
+  //   } else {
+  //     return res.sendStatus(500).end()
+  //   }
+  // }
+  // return res.sendStatus(400).end();
+  return baseCreate(res, req.body, Lists, selectColumns);
 }
 
 /**
@@ -41,7 +89,7 @@ export async function create(req: Request, res: Response): Promise<Response | vo
  * @param {string} uuid
  */
 export async function update(req: Request, res: Response): Promise<Response> {
-  return baseUpdate(req, res, Lists, selectColumns, true);
+  return baseUpdate(res, req.params.uuid, req.body, Lists, selectColumns);
 }
 
 /**
@@ -49,5 +97,5 @@ export async function update(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function remove(req: Request, res: Response): Promise<Response | void> {
-  return baseRemove(req, res, Lists);
+  return baseRemove(res, req.params.uuid, req.body, Lists);
 }
