@@ -5,8 +5,10 @@ import knex from '../database';
 import ListProducts from '../database/entitites/list_products';
 import Lists, { StatusList } from '../database/entitites/lists';
 import Products from '../database/entitites/products';
+import { MissingParamsException, MissingReferencesFieldsException } from '../exceptions';
 import { formatReferenceFieldUUId, isEmpty } from '../utils';
-import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
+import { baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
+import { create as databaseCreate } from './database.controller';
 
 const selectColumns = [
   knex.ref(Lists.mapping.uuid).as(Lists.column.uuid),
@@ -46,42 +48,43 @@ export async function show(req: Request, res: Response): Promise<Response> {
  * @route POST /api/lists
  */
 export async function create(req: Request, res: Response): Promise<Response | void> {
-  // if (req.body) {
-  //   let resCreateLists: JsonObject = {};
-  //   await baseCreate(req.body, res, Lists, selectColumns, resCreateLists, false, true);
+  if (req.body) {
+    try {
+      const list = await databaseCreate(req.body, Lists, selectColumns);
 
-  //   if (!isEmpty(resCreateLists)) {
-  //     const valueListUUID = resCreateLists.body ? resCreateLists.body['uuid'] : '';
+      if (list && !isEmpty(list['uuid'] as string)) {
+        if (req.body['products']) {
+          const products = Array.from(req.body['products']);
 
-  //     await Array.from(req.body['products']).map(async (prod) => {
-  //       const form: JsonObject = {
-  //         [formatReferenceFieldUUId(Lists)]: valueListUUID,
-  //         [formatReferenceFieldUUId(Products)]: prod as string,
-  //         date: new Date().toJSON(),
-  //         status: StatusList.Create,
-  //       };
-  //       console.log(form);
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          products.forEach(async (prod) => {
+            const form: JsonObject = {
+              [formatReferenceFieldUUId(Lists)]: list['uuid'] as string,
+              [formatReferenceFieldUUId(Products)]: prod as string,
+              date: new Date().toJSON(),
+              status: StatusList.Create,
+            };
 
-  //       const resCreateProduct: JsonObject = {};
-  //       await baseCreate(form, res, ListProducts, selectColumnsListProducts, resCreateProduct, false, true);
-  //       if (!isEmpty(resCreateProduct)) {
-  //         console.log(`product ${prod as string} link on list ${valueListUUID}`)
-  //       }
-  //       else {
-  //         console.error(`error link product: ${prod as string} in list ${valueListUUID}`)
-  //       }
-  //       console.log('pass final loop');
+            const listProduct = await databaseCreate(form, ListProducts, selectColumnsListProducts);
 
-  //       return res.statusCode(201).json(resCreateLists);
-  //     });
-
-  //     return res.sendStatus(205).json(resJson);
-  //   } else {
-  //     return res.sendStatus(500).end()
-  //   }
-  // }
-  // return res.sendStatus(400).end();
-  return baseCreate(res, req.body, Lists, selectColumns);
+            if (!listProduct || isEmpty(listProduct['uuid'] as string)) {
+              console.error(`error to link product: ${prod} in ${list['uuid'] as string} list`);
+            }
+          });
+        }
+        return res.status(201).json(list).end();
+      }
+    } catch (error) {
+      if (
+        error instanceof MissingParamsException ||
+        error instanceof MissingReferencesFieldsException
+      ) {
+        return res.status(400).end();
+      }
+      return res.status(500).end();
+    }
+  }
+  return res.status(400).end();
 }
 
 /**
