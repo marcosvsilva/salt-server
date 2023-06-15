@@ -3,7 +3,11 @@ import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
 import { DatabaseTable, Entity } from '../database/entitites/database';
-import { MissingIdException, MissingParamsException, MissingReferencesFieldsException } from '../exceptions';
+import {
+  MissingIdException,
+  MissingParamsException,
+  MissingReferencesFieldsException,
+} from '../exceptions';
 import {
   addIdentifiers,
   addTimestamps,
@@ -69,20 +73,19 @@ export async function getAll(
  *
  */
 
-async function referenceFieldsIsValid(
+function referenceFieldsIsValid(
   entity: Entity<DatabaseTable>,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-): Promise<boolean> {
+): boolean {
   let missingValues = true;
   if (entity.reference && params) {
-    await Promise.all(
-      entity.reference.map(async (ent) => {
-        if (missingValues) {
-          const field = formatReferenceFieldUUId(ent) || '';
-          missingValues = !isEmpty(params[formatReferenceFieldUUId(ent)] as string);
-        }
-      }),
-    );
+    const entities = [...entity.reference] as Entity<DatabaseTable>[];
+    entities.forEach((ent) => {
+      if (missingValues) {
+        const field = formatReferenceFieldUUId(ent) || '';
+        missingValues = !isEmpty(params[field] as string);
+      }
+    });
   }
 
   return missingValues;
@@ -101,7 +104,7 @@ export async function create(
   params = addTimestamps(params, entity, 'create');
   params = addIdentifiers(params, entity);
 
-  const checkReferences = await referenceFieldsIsValid(entity, params);
+  const checkReferences = referenceFieldsIsValid(entity, params);
   if (!checkReferences) {
     throw new MissingReferencesFieldsException();
   }
@@ -193,7 +196,7 @@ export async function remove(
     .where(entity.mapping.uuid, uuid)
     .limit(1)
     .delete()
-    .then((entry) => { })
+    .then((entry) => {})
     .catch((error: Error) => {
       console.error(error);
       throw error;
