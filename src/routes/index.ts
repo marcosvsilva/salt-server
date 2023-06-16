@@ -1,8 +1,9 @@
-import express, { Router, Request, Response } from 'express';
+import express, { Request, Response, Router } from 'express';
+
 import * as listsController from '../controllers/lists.controller';
-import * as usersController from '../controllers/users.controller';
 import * as pricesController from '../controllers/prices.controller';
 import * as productsController from '../controllers/products.controller';
+import * as usersController from '../controllers/users.controller';
 
 const router: Router = express.Router();
 

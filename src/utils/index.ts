@@ -1,8 +1,9 @@
-import { DatabaseTable, Entity } from '../database/entitites/database';
 import { Knex } from 'knex';
 import { JsonArray, JsonObject, JsonValue } from 'type-fest';
 import uuidv6 from 'uuid-with-v6';
+
 import knex from '../database';
+import { DatabaseTable, Entity } from '../database/entitites/database';
 
 function processKeys(
   _object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
@@ -32,13 +33,13 @@ function processKeys(
 
   // References
   if (entity.reference && _object) {
-    entity.reference.map(ent => {
+    entity.reference.forEach((ent) => {
       const field = formatReferenceFieldUUId(ent);
       object[formatReferenceFieldUUId(ent)] = _object[field];
-    })
+    });
   }
 
-  return object
+  return object;
 }
 
 export const filterParams = (
@@ -139,12 +140,8 @@ export const isEmpty = (
   return false;
 };
 
-export function formatReferenceFieldId(entity: Entity<DatabaseTable>): string {
-  return `${entity.table_name.toLowerCase()}_${entity.column.id.toLowerCase()}`;
-}
-
 export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
-  return `${entity.table_name.toLowerCase()}_${entity.column.uuid.toLowerCase()}`;
+  return `${entity.table_name.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
 }
 
 export function getEnumByValue<T extends string | number>(
