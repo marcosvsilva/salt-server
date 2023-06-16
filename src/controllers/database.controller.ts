@@ -24,6 +24,12 @@ export type Ref = Knex.Ref<
   }
 >[];
 
+export interface Where {
+  field: string;
+  operator: string;
+  value: string;
+}
+
 /**
  * GetByID
  *
@@ -36,7 +42,7 @@ export async function getByID(
   return knex
     .select(selectColumns)
     .from(entity.table_name)
-    .where(entity.column.uuid, idValue)
+    .where(entity.mapping.uuid, idValue)
     .limit(1)
     .first()
     .then((entry) => {
@@ -55,10 +61,17 @@ export async function getByID(
 export async function getAll(
   selectColumns: Ref,
   entity: Entity<DatabaseTable>,
+  where?: Where[],
 ): Promise<DatabaseTable | DatabaseTable[] | undefined> {
-  return knex
-    .select(selectColumns)
-    .from(entity.table_name)
+  let query = knex.select(selectColumns).from(entity.table_name);
+
+  if (where && where?.length > 0) {
+    Array.from(where).forEach((condition) => {
+      query = query.where(condition.field, condition.operator, condition.value);
+    });
+  }
+
+  return query
     .then((entries) => {
       return deserialize(entries, entity);
     })
