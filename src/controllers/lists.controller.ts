@@ -11,7 +11,11 @@ import Products from '../database/entitites/products';
 import { MissingParamsException, MissingReferencesFieldsException } from '../exceptions';
 import { formatReferenceFieldUUId, isEmpty } from '../utils';
 import { baseRemove, baseShow, baseUpdate } from './application.controller';
-import { create as databaseCreate, getAll as databaseIndex } from './database.controller';
+import {
+  create as databaseCreate,
+  getAll as databaseIndex,
+  getByID as databaseShow,
+} from './database.controller';
 import { getAllByList } from './products.controller';
 
 /**
@@ -44,7 +48,26 @@ export async function index(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function show(req: Request, res: Response): Promise<Response> {
-  return baseShow(res, req.params.uuid, Lists, selectColumnsLists);
+  try {
+    console.log(JSON.stringify(req.params));
+    if (req.params && (req.params.uuid as string).length > 0) {
+      const list = await databaseShow(req.params.uuid, selectColumnsLists, Lists);
+
+      if (list) {
+        const products = await getAllByList((list as DatabaseTable).uuid);
+
+        if (products && (products as DatabaseTable[]).length > 0) {
+          list['products'] = products;
+        }
+
+        return res.status(200).json(list).end();
+      }
+    }
+    return res.status(400).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).end();
+  }
 }
 
 /**
