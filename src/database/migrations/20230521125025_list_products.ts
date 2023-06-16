@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { formatReferenceFieldId, formatReferenceFieldUUId } from '../../utils';
+import { formatReferenceFieldUUId } from '../../utils';
 import ListProducts from '../entitites/list_products';
 import Products from '../entitites/products';
 import Lists from '../entitites/lists';
