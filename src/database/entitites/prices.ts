@@ -1,3 +1,4 @@
+import knex from '..';
 import { DatabaseTable, Entity, SchemaMapping } from './database';
 import Products from './products';
 
@@ -36,8 +37,15 @@ const Prices: Entity<Price> = {
   column: priceColumns,
   mapping: priceMapping,
   reference: [Products],
-  allowed: [priceColumns.date,
-            priceColumns.price],
+  allowed: [priceColumns.date, priceColumns.price],
 };
+
+export const selectColumnsPrices = [
+  knex.ref(Prices.mapping.uuid).as(Prices.column.uuid),
+  knex.ref(Prices.mapping.date).as(Prices.column.date),
+  knex.ref(Prices.mapping.price).as(Prices.column.price),
+  knex.ref(Prices.mapping.createdAt).as(Prices.column.createdAt),
+  knex.ref(Prices.mapping.updatedAt).as(Prices.column.updatedAt),
+];
 
 export default Prices;
