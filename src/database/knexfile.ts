@@ -12,7 +12,7 @@ const options = {
     },
     migrations: {
       tableName: process.env.DB_MIGRATIONS_TABLE || 'migrations',
-      directory: __dirname + '/migrations',
+      directory: `${__dirname}/migrations`,
       loadExtensions: ['.ts'],
       extension: 'ts',
     },
@@ -31,7 +31,7 @@ const options = {
     },
     migrations: {
       tableName: process.env.DB_MIGRATIONS_TABLE || 'migrations',
-      directory: __dirname + '/migrations',
+      directory: `${__dirname}/migrations`,
       loadExtensions: ['.ts'],
       extension: 'ts',
     },

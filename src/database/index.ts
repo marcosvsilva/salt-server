@@ -1,4 +1,5 @@
 import { Knex, knex as knexCli } from 'knex';
+
 import knexfile from './knexfile';
 
 /**
