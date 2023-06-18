@@ -3,7 +3,8 @@ import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
 import { DatabaseTable, Entity } from '../database/entitites/database';
-import { MissingParamsException, MissingReferencesFieldsException } from '../exceptions';
+import MissingParamsException from '../exceptions/missing_params';
+import MissingReferencesFieldsException from '../exceptions/missing_references_fields';
 import { create, getAll, getByID, Ref, remove, update } from './database.controller';
 
 /**
@@ -15,10 +16,15 @@ export async function baseIndex(
   selectColumns: Ref,
 ): Promise<Response> {
   const entries = await getAll(selectColumns, entity);
-  if (entries) {
-    return res.status(200).json(entries).end();
+  try {
+    if (entries) {
+      return res.status(200).json(entries).end();
+    }
+    return res.status(200).json({}).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).end();
   }
-  return res.status(500).end();
 }
 
 /**
@@ -31,15 +37,20 @@ export async function baseShow(
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
 ): Promise<Response> {
-  if (uuid.length == 0) {
+  if (uuid.length === 0) {
     return res.status(400).end();
   }
-  
+
   const entry = await getByID(uuid, selectColumns, entity);
-  if (entry) {
-    return res.status(200).json(entry).end();
+  try {
+    if (entry) {
+      return res.status(200).json(entry).end();
+    }
+    return res.status(404).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).end();
   }
-  return res.status(500).end();
 }
 
 /**
@@ -52,20 +63,20 @@ export async function baseCreate(
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
   emptyResponse = false,
-): Promise<Response | void> {
+): Promise<Response> {
   if (!params) {
     return res.status(400).end();
   }
 
   try {
     const data = await create(params, entity, selectColumns);
-    if (data && data != undefined) {
+    if (data && data !== undefined) {
       if (emptyResponse) {
         return res.status(201).end();
       }
       return res.status(201).json(data).end();
     }
-    return res.status(500).end();
+    return res.status(404).end();
   } catch (error) {
     console.error(error);
     if (
@@ -89,15 +100,20 @@ export async function baseUpdate(
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
 ): Promise<Response> {
-  if (uuid.length == 0) {
+  if (uuid.length === 0) {
     return res.status(400).end();
   }
 
-  const data = update(params, uuid, entity, selectColumns);
-  if (data && data != undefined) {
-    return res.status(200).json(data).end();
+  try {
+    const data = await update(params, uuid, entity, selectColumns);
+    if (data) {
+      return res.status(200).json(data).end();
+    }
+    return res.status(404).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).end();
   }
-  return res.status(500).end();
 }
 
 /**
@@ -109,14 +125,17 @@ export async function baseRemove(
   uuid: string,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
-): Promise<Response | void> {
-  if (uuid.length == 0) {
+): Promise<Response> {
+  if (uuid.length === 0) {
     return res.status(400).end();
   }
 
   try {
-    remove(params, uuid, entity);
-    return res.status(204).end();
+    const removed = await remove(params, uuid, entity);
+    if (removed) {
+      return res.status(204).end();
+    }
+    return res.status(404).end();
   } catch (error) {
     console.error(error);
     return res.status(500).end();

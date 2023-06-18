@@ -21,7 +21,7 @@ export async function show(req: Request, res: Response): Promise<Response> {
 /**
  * @route POST /api/users
  */
-export async function create(req: Request, res: Response): Promise<Response | void> {
+export async function create(req: Request, res: Response): Promise<Response> {
   return baseCreate(res, req.body, Users, selectColumnsUsers);
 }
 
@@ -37,6 +37,6 @@ export async function update(req: Request, res: Response): Promise<Response> {
  * @route DELETE /api/users/:uuid
  * @param {string} uuid
  */
-export async function remove(req: Request, res: Response): Promise<Response | void> {
+export async function remove(req: Request, res: Response): Promise<Response> {
   return baseRemove(res, req.params.uuid, req.body, Users);
 }

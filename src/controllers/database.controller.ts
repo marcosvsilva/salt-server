@@ -3,11 +3,9 @@ import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
 import { DatabaseTable, Entity } from '../database/entitites/database';
-import {
-  MissingIdException,
-  MissingParamsException,
-  MissingReferencesFieldsException,
-} from '../exceptions';
+import MissingIdException from '../exceptions/missing_id';
+import MissingParamsException from '../exceptions/missing_params';
+import MissingReferencesFieldsException from '../exceptions/missing_references_fields';
 import {
   addIdentifiers,
   addTimestamps,
@@ -38,7 +36,7 @@ export async function getByID(
   idValue: string,
   selectColumns: Ref,
   entity: Entity<DatabaseTable>,
-): Promise<DatabaseTable | DatabaseTable[] | undefined> {
+): Promise<DatabaseTable> {
   return knex
     .select(selectColumns)
     .from(entity.table_name)
@@ -46,11 +44,14 @@ export async function getByID(
     .limit(1)
     .first()
     .then((entry) => {
-      return deserialize(entry, entity);
+      const files = deserialize(entry, entity);
+      if (Array.isArray(files)) {
+        return files[0];
+      }
+      return files;
     })
     .catch((error: Error) => {
-      console.log(error);
-      return undefined;
+      throw error;
     });
 }
 
@@ -62,7 +63,7 @@ export async function getAll(
   selectColumns: Ref,
   entity: Entity<DatabaseTable>,
   where?: Where[],
-): Promise<DatabaseTable | DatabaseTable[] | undefined> {
+): Promise<DatabaseTable[]> {
   let query = knex.select(selectColumns).from(entity.table_name);
 
   if (where && where?.length > 0) {
@@ -73,11 +74,14 @@ export async function getAll(
 
   return query
     .then((entries) => {
-      return deserialize(entries, entity);
+      const files = deserialize(entries, entity);
+      if (Array.isArray(files)) {
+        return files;
+      }
+      return [files] as DatabaseTable[];
     })
     .catch((error: Error) => {
-      console.error(error);
-      return undefined;
+      throw error;
     });
 }
 
@@ -108,7 +112,7 @@ export async function create(
   _params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
-): Promise<DatabaseTable | DatabaseTable[] | undefined | void> {
+): Promise<DatabaseTable> {
   if (!_params) {
     throw new MissingParamsException();
   }
@@ -139,11 +143,14 @@ export async function create(
         );
     })
     .then((entry) => {
-      return deserialize(entry, entity);
+      const files = deserialize(entry, entity);
+      if (Array.isArray(files)) {
+        return files[0];
+      }
+      return files;
     })
     .catch((error: Error) => {
-      console.error(error);
-      return undefined;
+      throw error;
     });
 }
 
@@ -156,8 +163,8 @@ export async function update(
   uuid: string,
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
-): Promise<DatabaseTable | DatabaseTable[] | undefined> {
-  if (uuid.length == 0) {
+): Promise<DatabaseTable> {
+  if (uuid.length === 0) {
     throw new MissingIdException();
   }
 
@@ -184,11 +191,14 @@ export async function update(
         );
     })
     .then((entry) => {
-      return deserialize(entry, entity);
+      const files = deserialize(entry, entity);
+      if (Array.isArray(files)) {
+        return files[0];
+      }
+      return files;
     })
     .catch((error: Error) => {
-      console.error(error);
-      return undefined;
+      throw error;
     });
 }
 
@@ -200,8 +210,8 @@ export async function remove(
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   uuid: string,
   entity: Entity<DatabaseTable>,
-): Promise<void> {
-  if (uuid.length == 0) {
+): Promise<boolean> {
+  if (uuid.length === 0) {
     throw MissingIdException;
   }
 
@@ -209,9 +219,10 @@ export async function remove(
     .where(entity.mapping.uuid, uuid)
     .limit(1)
     .delete()
-    .then((entry) => {})
+    .then((result) => {
+      return !!result;
+    })
     .catch((error: Error) => {
-      console.error(error);
       throw error;
     });
 }

@@ -1,16 +1,17 @@
 import { Request, Response } from 'express';
 import { JsonObject } from 'type-fest';
 
-import { DatabaseTable } from '../database/entitites/database';
+import knex from '../database';
 import ListProducts, {
   selectColumnsListProducts,
   StatusListProduct,
 } from '../database/entitites/list_products';
-import Lists, { selectColumnsLists } from '../database/entitites/lists';
+import Lists, { List, selectColumnsLists } from '../database/entitites/lists';
 import Products from '../database/entitites/products';
-import { MissingParamsException, MissingReferencesFieldsException } from '../exceptions';
+import MissingParamsException from '../exceptions/missing_params';
+import MissingReferencesFieldsException from '../exceptions/missing_references_fields';
 import { formatReferenceFieldUUId, isEmpty } from '../utils';
-import { baseRemove, baseShow, baseUpdate } from './application.controller';
+import { baseRemove, baseUpdate } from './application.controller';
 import {
   create as databaseCreate,
   getAll as databaseIndex,
@@ -25,18 +26,16 @@ export async function index(req: Request, res: Response): Promise<Response> {
   try {
     const lists = await databaseIndex(selectColumnsLists, Lists);
 
-    if (lists && Array(lists).length > 0) {
-      for (const index in lists) {
-        const products = await getAllByList((lists[index] as DatabaseTable).uuid);
+    for (const indexList in lists) {
+      if (indexList) {
+        const products = await getAllByList((lists[indexList] as List).uuid);
 
-        if (products && (products as DatabaseTable[]).length > 0) {
-          lists[index]['products'] = products;
+        if (products) {
+          (lists[indexList] as List).products = products;
         }
       }
-
-      return res.status(200).json(lists).end();
     }
-    return res.status(200).end();
+    return res.status(200).json(lists).end();
   } catch (error) {
     console.error(error);
     return res.status(500).end();
@@ -49,15 +48,14 @@ export async function index(req: Request, res: Response): Promise<Response> {
  */
 export async function show(req: Request, res: Response): Promise<Response> {
   try {
-    console.log(JSON.stringify(req.params));
     if (req.params && (req.params.uuid as string).length > 0) {
       const list = await databaseShow(req.params.uuid, selectColumnsLists, Lists);
 
       if (list) {
-        const products = await getAllByList((list as DatabaseTable).uuid);
+        const products = await getAllByList((list as List).uuid);
 
-        if (products && (products as DatabaseTable[]).length > 0) {
-          list['products'] = products;
+        if (products) {
+          (list as List).products = products;
         }
 
         return res.status(200).json(list).end();
@@ -74,29 +72,30 @@ export async function show(req: Request, res: Response): Promise<Response> {
  * @route POST /api/lists
  */
 export async function create(req: Request, res: Response): Promise<Response | void> {
-  if (req.body) {
-    try {
+  try {
+    if (req.body) {
       const list = await databaseCreate(req.body, Lists, selectColumnsLists);
 
       if (list) {
-        if (req.body['products']) {
-          linkProducts(list['uuid'], req.body['products'] as string[]);
+        try {
+          await linkProducts((list as List).uuid, req.body.products as string[]);
+        } catch (error) {
+          res.status(400).end();
         }
         return res.status(201).json(list).end();
       }
-      return res.status(500).end();
-    } catch (error) {
-      console.error(error);
-      if (
-        error instanceof MissingParamsException ||
-        error instanceof MissingReferencesFieldsException
-      ) {
-        return res.status(400).end();
-      }
-      return res.status(500).end();
     }
+    return res.status(400).end();
+  } catch (error) {
+    console.error(error);
+    if (
+      error instanceof MissingParamsException ||
+      error instanceof MissingReferencesFieldsException
+    ) {
+      return res.status(400).end();
+    }
+    return res.status(500).end();
   }
-  return res.status(400).end();
 }
 
 /**
@@ -115,22 +114,43 @@ export async function remove(req: Request, res: Response): Promise<Response | vo
   return baseRemove(res, req.params.uuid, req.body, Lists);
 }
 
-function linkProducts(listUUID: string, products: string[]): void {
-  if (Array.isArray(products)) {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    products.forEach(async (prod) => {
-      const form: JsonObject = {
-        [formatReferenceFieldUUId(Lists)]: listUUID,
-        [formatReferenceFieldUUId(Products)]: prod,
-        date: new Date().toJSON(),
-        status: JSON.stringify(StatusListProduct.Create),
-      };
+async function linkProducts(listUUID: string, products: string[]): Promise<void> {
+  if (products && Array.isArray(products)) {
+    for (const i in products) {
+      if (products[i]) {
+        const form: JsonObject = {
+          [formatReferenceFieldUUId(Lists)]: listUUID,
+          [formatReferenceFieldUUId(Products)]: products[i],
+          date: new Date().toJSON(),
+          status: JSON.stringify(StatusListProduct.Create),
+        };
 
-      const listProduct = await databaseCreate(form, ListProducts, selectColumnsListProducts);
+        const listProduct = await databaseCreate(form, ListProducts, selectColumnsListProducts);
 
-      if (!listProduct || isEmpty(listProduct['uuid'] as string)) {
-        console.error(`error to link product: ${prod} in ${listUUID} list`);
+        if (!listProduct || isEmpty(listProduct.uuid)) {
+          console.error(`error to link product: ${products[i]} in ${listUUID} list`);
+        }
       }
-    });
+    }
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function removeProductsList(listUUID: string): Promise<void> {
+  if (listUUID.length > 0) {
+    const products = await getAllByList(listUUID);
+
+    if (products && Array.isArray(products)) {
+      products.forEach((prod) => {
+        knex(ListProducts.table_name)
+          .where(formatReferenceFieldUUId(Lists), listUUID)
+          .where(formatReferenceFieldUUId(Products), prod.uuid)
+          .limit(1)
+          .delete()
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+    }
   }
 }
