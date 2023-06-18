@@ -6,11 +6,14 @@ export interface Price extends DatabaseTable {
   date: Date;
   price: number;
 
-  //database
+  // database
   id: number;
   uuid: string;
   createdAt: Date;
   updatedAt: Date;
+
+  // references
+  prices?: Price[];
 }
 
 const priceColumns: SchemaMapping<Price> = {
@@ -41,11 +44,11 @@ const Prices: Entity<Price> = {
 };
 
 export const selectColumnsPrices = [
-  knex.ref(Prices.mapping.uuid).as(Prices.column.uuid),
-  knex.ref(Prices.mapping.date).as(Prices.column.date),
-  knex.ref(Prices.mapping.price).as(Prices.column.price),
-  knex.ref(Prices.mapping.createdAt).as(Prices.column.createdAt),
-  knex.ref(Prices.mapping.updatedAt).as(Prices.column.updatedAt),
+  knex.ref(Prices.mapping.uuid).as(Prices.column.uuid).withSchema(Prices.table_name),
+  knex.ref(Prices.mapping.date).as(Prices.column.date).withSchema(Prices.table_name),
+  knex.ref(Prices.mapping.price).as(Prices.column.price).withSchema(Prices.table_name),
+  knex.ref(Prices.mapping.createdAt).as(Prices.column.createdAt).withSchema(Prices.table_name),
+  knex.ref(Prices.mapping.updatedAt).as(Prices.column.updatedAt).withSchema(Prices.table_name),
 ];
 
 export default Prices;

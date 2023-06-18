@@ -6,7 +6,7 @@ export interface User extends DatabaseTable {
   user_name: string;
   password: string;
 
-  //database
+  // database
   id: number;
   uuid: string;
   createdAt: Date;

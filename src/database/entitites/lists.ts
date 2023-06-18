@@ -1,6 +1,8 @@
+/* eslint-disable prettier/prettier */
 import knex from '..';
 import { DatabaseTable, Entity, SchemaMapping } from './database';
-import Users from './users';
+import { Product } from './products';
+import Users, { User } from './users';
 
 export enum StatusList {
   Create = 0,
@@ -16,11 +18,15 @@ export interface List extends DatabaseTable {
   discount: number;
   date_completed: Date;
 
-  //database
+  // database
   id: number;
   uuid: string;
   createdAt: Date;
   updatedAt: Date;
+
+  // references
+  user?: User;
+  products?: Product[];
 }
 
 const listColumns: SchemaMapping<List> = {
@@ -63,14 +69,38 @@ const Lists: Entity<List> = {
 };
 
 export const selectColumnsLists = [
-  knex.ref(Lists.mapping.uuid).as(Lists.column.uuid),
-  knex.ref(Lists.mapping.name).as(Lists.column.name),
-  knex.ref(Lists.mapping.status).as(Lists.column.status),
-  knex.ref(Lists.mapping.total_list).as(Lists.column.total_list),
-  knex.ref(Lists.mapping.discount).as(Lists.column.discount),
-  knex.ref(Lists.mapping.date_completed).as(Lists.column.date_completed),
-  knex.ref(Lists.mapping.createdAt).as(Lists.column.createdAt),
-  knex.ref(Lists.mapping.updatedAt).as(Lists.column.updatedAt),
+  knex
+    .ref(Lists.mapping.uuid)
+    .as(Lists.column.uuid)
+    .withSchema(Lists.table_name),
+  knex
+    .ref(Lists.mapping.name)
+    .as(Lists.column.name)
+    .withSchema(Lists.table_name),
+  knex
+    .ref(Lists.mapping.status)
+    .as(Lists.column.status)
+    .withSchema(Lists.table_name),
+  knex
+    .ref(Lists.mapping.total_list)
+    .as(Lists.column.total_list)
+    .withSchema(Lists.table_name),
+  knex
+    .ref(Lists.mapping.discount)
+    .as(Lists.column.discount)
+    .withSchema(Lists.table_name),
+  knex
+    .ref(Lists.mapping.date_completed)
+    .as(Lists.column.date_completed)
+    .withSchema(Lists.table_name),
+  knex
+    .ref(Lists.mapping.createdAt)
+    .as(Lists.column.createdAt)
+    .withSchema(Lists.table_name),
+  knex
+    .ref(Lists.mapping.updatedAt)
+    .as(Lists.column.updatedAt)
+    .withSchema(Lists.table_name),
 ];
 
 export default Lists;

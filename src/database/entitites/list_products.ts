@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import knex from '..';
 import { DatabaseTable, Entity, SchemaMapping } from './database';
 import Lists from './lists';
@@ -13,7 +14,7 @@ export interface ListProduct extends DatabaseTable {
   date: Date;
   status: StatusListProduct;
 
-  //database
+  // database
   id: number;
   uuid: string;
   createdAt: Date;
@@ -48,11 +49,26 @@ const ListProducts: Entity<ListProduct> = {
 };
 
 export const selectColumnsListProducts = [
-  knex.ref(ListProducts.mapping.uuid).as(ListProducts.column.uuid),
-  knex.ref(ListProducts.mapping.date).as(ListProducts.column.date),
-  knex.ref(ListProducts.mapping.status).as(ListProducts.column.status),
-  knex.ref(ListProducts.mapping.createdAt).as(ListProducts.column.createdAt),
-  knex.ref(ListProducts.mapping.updatedAt).as(ListProducts.column.updatedAt),
+  knex
+    .ref(ListProducts.mapping.uuid)
+    .as(ListProducts.column.uuid)
+    .withSchema(ListProducts.table_name),
+  knex
+    .ref(ListProducts.mapping.date)
+    .as(ListProducts.column.date)
+    .withSchema(ListProducts.table_name),
+  knex
+    .ref(ListProducts.mapping.status)
+    .as(ListProducts.column.status)
+    .withSchema(ListProducts.table_name),
+  knex
+    .ref(ListProducts.mapping.createdAt)
+    .as(ListProducts.column.createdAt)
+    .withSchema(ListProducts.table_name),
+  knex
+    .ref(ListProducts.mapping.updatedAt)
+    .as(ListProducts.column.updatedAt)
+    .withSchema(ListProducts.table_name),
 ];
 
 export default ListProducts;
