@@ -8,9 +8,8 @@
     "start": "node dist/server.js",
     "dev": "npx nodemon dist/server.js",
     "lint": "eslint . --fix --ext .ts,.js",
-    "build": "tsc",
-    "build-list": "npm run lint && npm run build-dist",
-    "build-dist": "rimraf dist/* && rollup -c",
+    "build": "npm run lint && npm run build-dist",
+    "build-dist": "rimraf dist/app.dist.js && tsc",
     "knex:migrate:make": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:make --knexfile ./src/database/knexfile.ts -x ts",
     "knex:migrate:latest": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:latest --knexfile ./src/database/knexfile.ts"
   },
@@ -27,20 +26,21 @@
     "pg": "^8.11.0",
     "prettier": "^2.8.8",
     "ts-node": "^10.9.1",
+    "type-fest": "^3.12.0",
     "typescript": "^5.0.4",
     "uuid-with-v6": "^2.0.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.48.2",
+    "eslint": "^8.40.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-simple-import-sort": "^9.0.0",
     "eslint-plugin-sonarjs": "^0.18.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.11",
-    "eslint": "^8.40.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.3",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.3"
   }
 }
