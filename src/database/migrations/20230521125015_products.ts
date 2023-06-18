@@ -1,9 +1,8 @@
 import { Knex } from 'knex';
+
 import Products from '../entitites/products';
 
 export async function up(knex: Knex): Promise<void> {
-  const jsonType = knex.client.config.client in ['sqlite3', 'oracledb'] ? 'json' : 'jsonb';
-
   return knex.schema
     .hasTable(Products.table_name)
     .then((exists) => {
@@ -17,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid(Products.mapping.uuid).unique().notNullable();
 
         // Colums
-        table.string(Products.mapping.name).notNullable;
+        table.string(Products.mapping.name).notNullable();
         table.string(Products.mapping.description);
 
         // Controls

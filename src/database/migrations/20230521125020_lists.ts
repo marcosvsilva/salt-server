@@ -1,11 +1,10 @@
 import { Knex } from 'knex';
+
 import { formatReferenceFieldUUId } from '../../utils';
 import Lists from '../entitites/lists';
 import Users from '../entitites/users';
 
 export async function up(knex: Knex): Promise<void> {
-  const jsonType = knex.client.config.client in ['sqlite3', 'oracledb'] ? 'json' : 'jsonb';
-
   return knex.schema
     .hasTable(Lists.table_name)
     .then((exists) => {
@@ -28,8 +27,8 @@ export async function up(knex: Knex): Promise<void> {
 
         // Colums
         table.string(Lists.mapping.name);
-        table.integer(Lists.mapping.status).notNullable;
-        table.double(Lists.mapping.total_list).notNullable;
+        table.integer(Lists.mapping.status).notNullable();
+        table.double(Lists.mapping.total_list).notNullable();
         table.double(Lists.mapping.discount);
         table.datetime(Lists.mapping.date_completed);
 
