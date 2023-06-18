@@ -5,6 +5,10 @@ import uuidv6 from 'uuid-with-v6';
 import knex from '../database';
 import { DatabaseTable, Entity } from '../database/entitites/database';
 
+export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
+  return `${entity.table_name.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
+}
+
 function processKeys(
   _object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
@@ -139,10 +143,6 @@ export const isEmpty = (
 
   return false;
 };
-
-export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
-  return `${entity.table_name.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
-}
 
 export function getEnumByValue<T extends string | number>(
   enumObject: { [x: string]: T },

@@ -11,41 +11,45 @@ const router: Router = express.Router();
  * Lists
  */
 
-router.get('/api/lists', listsController.index);
-router.get('/api/lists/:uuid', listsController.show);
-router.post('/api/lists', listsController.create);
-router.put('/api/lists/:uuid', listsController.update);
-router.delete('/api/lists/:uuid', listsController.remove);
+const routerList = '/api/lists';
+router.get(routerList, listsController.index);
+router.get(`${routerList}/:uuid`, listsController.show);
+router.post(routerList, listsController.create);
+router.put(`${routerList}/:uuid`, listsController.update);
+router.delete(`${routerList}/:uuid`, listsController.remove);
 
 /**
  * Users
  */
 
-router.get('/api/users', usersController.index);
-router.get('/api/users/:uuid', usersController.show);
-router.post('/api/users', usersController.create);
-router.put('/api/users/:uuid', usersController.update);
-router.delete('/api/users/:uuid', usersController.remove);
+const routerUser = '/api/users';
+router.get(routerUser, usersController.index);
+router.get(`${routerUser}/:uuid`, usersController.show);
+router.post(routerUser, usersController.create);
+router.put(`${routerUser}/:uuid`, usersController.update);
+router.delete(`${routerUser}/:uuid`, usersController.remove);
 
 /**
  * Products
  */
 
-router.get('/api/products', productsController.index);
-router.get('/api/products/:uuid', productsController.show);
-router.post('/api/products', productsController.create);
-router.put('/api/products/:uuid', productsController.update);
-router.delete('/api/products/:uuid', productsController.remove);
+const routerProducts = '/api/products';
+router.get(routerProducts, productsController.index);
+router.get(`${routerProducts}/:uuid`, productsController.show);
+router.post(routerProducts, productsController.create);
+router.put(`${routerProducts}/:uuid`, productsController.update);
+router.delete(`${routerProducts}/:uuid`, productsController.remove);
 
 /**
  * Prices
  */
 
-router.get('/api/prices', pricesController.index);
-router.get('/api/prices/:uuid', pricesController.show);
-router.post('/api/prices', pricesController.create);
-router.put('/api/prices/:uuid', pricesController.update);
-router.delete('/api/prices/:uuid', pricesController.remove);
+const routerPrices = '/api/prices';
+router.get(routerPrices, pricesController.index);
+router.get(`${routerPrices}/:uuid`, pricesController.show);
+router.post(routerPrices, pricesController.create);
+router.put(`${routerPrices}/:uuid`, pricesController.update);
+router.delete(`${routerPrices}/:uuid`, pricesController.remove);
 
 /**
  * Root
