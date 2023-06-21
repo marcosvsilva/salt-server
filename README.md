@@ -10,4 +10,4 @@ This projets is writing in Node and TypeScript and uses thats libraries and fram
 - Express;
 - PostgreSQL;
 - KNEX;
-- ESLint;
+- ESLint & Prettier;
