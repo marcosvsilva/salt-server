@@ -1,6 +1,8 @@
-class MissingReferencesFieldsException extends Error {
+export const MESSAGE_REFERENCES_FIELDS = 'Required reference fields are missing';
+
+export class MissingReferencesFieldsException extends Error {
   constructor() {
-    super('Required reference fields are missing');
+    super(MESSAGE_REFERENCES_FIELDS);
     this.name = 'MissingReferencesFieldsException';
   }
 }
