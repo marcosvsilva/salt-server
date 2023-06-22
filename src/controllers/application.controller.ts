@@ -3,8 +3,12 @@ import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
 import { DatabaseTable, Entity } from '../database/entitites/database';
-import MissingParamsException from '../exceptions/missing_params';
-import MissingReferencesFieldsException from '../exceptions/missing_references_fields';
+import {
+  InvalidUUIDException,
+  MissingParamsException,
+  MissingReferencesFieldsException,
+} from '../exceptions';
+import { isEmpty } from '../utils';
 import { create, getAll, getByID, Ref, remove, update } from './database.controller';
 
 /**
@@ -15,12 +19,15 @@ export async function baseIndex(
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
 ): Promise<Response> {
-  const entries = await getAll(selectColumns, entity);
   try {
+    const entries = await getAll(selectColumns, entity);
     if (entries) {
-      return res.status(200).json(entries).end();
+      if (Array.isArray(entries) && Array.from(entries).length > 0) {
+        return res.status(200).json(entries).end();
+      }
+      return res.status(200).json({}).end();
     }
-    return res.status(200).json({}).end();
+    return res.status(400).end();
   } catch (error) {
     console.error(error);
     return res.status(500).end();
@@ -37,17 +44,16 @@ export async function baseShow(
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
 ): Promise<Response> {
-  if (uuid.length === 0) {
-    return res.status(400).end();
-  }
-
-  const entry = await getByID(uuid, selectColumns, entity);
   try {
-    if (entry) {
+    const entry = await getByID(uuid, selectColumns, entity);
+    if (!isEmpty(entry)) {
       return res.status(200).json(entry).end();
     }
     return res.status(404).end();
   } catch (error) {
+    if (error instanceof InvalidUUIDException) {
+      return res.status(400).json(error.message).end();
+    }
     console.error(error);
     return res.status(500).end();
   }
@@ -64,27 +70,23 @@ export async function baseCreate(
   selectColumns: Ref,
   emptyResponse = false,
 ): Promise<Response> {
-  if (!params) {
-    return res.status(400).end();
-  }
-
   try {
     const data = await create(params, entity, selectColumns);
-    if (data && data !== undefined) {
+    if (!isEmpty(data)) {
       if (emptyResponse) {
         return res.status(201).end();
       }
       return res.status(201).json(data).end();
     }
-    return res.status(404).end();
+    return res.status(400).end();
   } catch (error) {
-    console.error(error);
     if (
       error instanceof MissingReferencesFieldsException ||
       error instanceof MissingParamsException
     ) {
-      return res.status(400).end();
+      return res.status(400).json(error.message).end();
     }
+    console.error(error);
     return res.status(500).end();
   }
 }
@@ -100,17 +102,16 @@ export async function baseUpdate(
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
 ): Promise<Response> {
-  if (uuid.length === 0) {
-    return res.status(400).end();
-  }
-
   try {
     const data = await update(params, uuid, entity, selectColumns);
-    if (data) {
+    if (!isEmpty(data)) {
       return res.status(200).json(data).end();
     }
-    return res.status(404).end();
+    return res.status(400).end();
   } catch (error) {
+    if (error instanceof InvalidUUIDException || error instanceof MissingParamsException) {
+      res.status(400).json(error.message).end();
+    }
     console.error(error);
     return res.status(500).end();
   }
@@ -123,20 +124,18 @@ export async function baseUpdate(
 export async function baseRemove(
   res: Response,
   uuid: string,
-  params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
 ): Promise<Response> {
-  if (uuid.length === 0) {
-    return res.status(400).end();
-  }
-
   try {
-    const removed = await remove(params, uuid, entity);
-    if (removed) {
+    const removed = await remove(uuid, entity);
+    if (!isEmpty(removed)) {
       return res.status(204).end();
     }
-    return res.status(404).end();
+    return res.status(400).end();
   } catch (error) {
+    if (error instanceof InvalidUUIDException) {
+      return res.status(400).json(error.message).end();
+    }
     console.error(error);
     return res.status(500).end();
   }

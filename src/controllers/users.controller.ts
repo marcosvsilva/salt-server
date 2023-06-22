@@ -38,5 +38,5 @@ export async function update(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function remove(req: Request, res: Response): Promise<Response> {
-  return baseRemove(res, req.params.uuid, req.body, Users);
+  return baseRemove(res, req.params.uuid, Users);
 }

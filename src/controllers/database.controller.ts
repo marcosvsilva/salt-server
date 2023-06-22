@@ -3,9 +3,11 @@ import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
 import { DatabaseTable, Entity } from '../database/entitites/database';
-import MissingIdException from '../exceptions/missing_id';
-import MissingParamsException from '../exceptions/missing_params';
-import MissingReferencesFieldsException from '../exceptions/missing_references_fields';
+import {
+  InvalidUUIDException,
+  MissingParamsException,
+  MissingReferencesFieldsException,
+} from '../exceptions';
 import {
   addIdentifiers,
   addTimestamps,
@@ -13,6 +15,7 @@ import {
   filterParams,
   formatReferenceFieldUUId,
   isEmpty,
+  isValidUUID,
 } from '../utils';
 
 export type Ref = Knex.Ref<
@@ -37,6 +40,10 @@ export async function getByID(
   selectColumns: Ref,
   entity: Entity<DatabaseTable>,
 ): Promise<DatabaseTable> {
+  if (!isValidUUID(idValue)) {
+    throw new InvalidUUIDException();
+  }
+
   return knex
     .select(selectColumns)
     .from(entity.table_name)
@@ -44,13 +51,17 @@ export async function getByID(
     .limit(1)
     .first()
     .then((entry) => {
-      const files = deserialize(entry, entity);
-      if (Array.isArray(files)) {
-        return files[0];
+      if (entry) {
+        const files = deserialize(entry, entity);
+        if (Array.isArray(files)) {
+          return files[0];
+        }
+        return files;
       }
-      return files;
+      return {} as DatabaseTable;
     })
     .catch((error: Error) => {
+      console.log(error);
       throw error;
     });
 }
@@ -164,8 +175,8 @@ export async function update(
   entity: Entity<DatabaseTable>,
   selectColumns: Ref,
 ): Promise<DatabaseTable> {
-  if (uuid.length === 0) {
-    throw new MissingIdException();
+  if (!isValidUUID(uuid)) {
+    throw new InvalidUUIDException();
   }
 
   if (!_params) {
@@ -206,13 +217,9 @@ export async function update(
  * Remove
  *
  */
-export async function remove(
-  params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-  uuid: string,
-  entity: Entity<DatabaseTable>,
-): Promise<boolean> {
-  if (uuid.length === 0) {
-    throw MissingIdException;
+export async function remove(uuid: string, entity: Entity<DatabaseTable>): Promise<boolean> {
+  if (!isValidUUID(uuid)) {
+    throw new InvalidUUIDException();
   }
 
   return knex(entity.table_name)

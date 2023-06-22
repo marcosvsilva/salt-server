@@ -4,8 +4,8 @@ import knex from '../database';
 import ListProducts from '../database/entitites/list_products';
 import Lists from '../database/entitites/lists';
 import Products, { Product, selectColumnsProducts } from '../database/entitites/products';
-import MissingIdException from '../exceptions/missing_id';
-import { deserialize, formatReferenceFieldUUId, isEmpty } from '../utils';
+import { InvalidUUIDException } from '../exceptions';
+import { deserialize, formatReferenceFieldUUId, isEmpty, isValidUUID } from '../utils';
 import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 /**
@@ -43,12 +43,12 @@ export async function update(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function remove(req: Request, res: Response): Promise<Response> {
-  return baseRemove(res, req.params.uuid, req.body, Products);
+  return baseRemove(res, req.params.uuid, Products);
 }
 
 export async function getAllByList(list_uuid: string): Promise<Product[]> {
-  if (isEmpty(list_uuid)) {
-    throw MissingIdException;
+  if (!isValidUUID(list_uuid)) {
+    throw new InvalidUUIDException();
   }
 
   return knex
