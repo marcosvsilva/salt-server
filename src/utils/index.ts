@@ -126,7 +126,7 @@ export const deserialize = (
 };
 
 export const isEmpty = (
-  varX: JsonObject | JsonArray | string | number | boolean | undefined,
+  varX: JsonObject | DatabaseTable | JsonArray | string | number | boolean | undefined,
 ): boolean => {
   const undef = undefined;
   const emptyValues = [undef, null, false, 0, '', '0', 'undefined'];
@@ -149,4 +149,12 @@ export function getEnumByValue<T extends string | number>(
   value: T,
 ): string {
   return Object.keys(enumObject).find((key) => enumObject[key] === value) || '';
+}
+
+export function isValidUUID(uuidStr: string): boolean {
+  if (uuidStr.length > 0) {
+    const pattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return pattern.test(uuidStr);
+  }
+  return false;
 }
