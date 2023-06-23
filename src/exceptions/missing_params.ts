@@ -1,8 +1,6 @@
-export const MESSAGE_MISSING_PARAMS = 'Required params are missing or empty';
-
 export class MissingParamsException extends Error {
   constructor() {
-    super(MESSAGE_MISSING_PARAMS);
+    super('Required params are missing or empty');
     this.name = 'MissingParamsException';
   }
 }
