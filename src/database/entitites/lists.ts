@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import knex from '..';
 import { DatabaseTable, Entity, SchemaMapping } from './database';
 import { Product } from './products';
@@ -53,11 +52,26 @@ const listMapping: SchemaMapping<List> = {
   updatedAt: 'updatedAt',
 };
 
+const schemaName = 'List';
+const tabName = 'Lists';
+
+const selectColumnsLists = [
+  knex.ref(listMapping.uuid).as(listColumns.uuid).withSchema(tabName),
+  knex.ref(listMapping.name).as(listColumns.name).withSchema(tabName),
+  knex.ref(listMapping.status).as(listColumns.status).withSchema(tabName),
+  knex.ref(listMapping.total_list).as(listColumns.total_list).withSchema(tabName),
+  knex.ref(listMapping.discount).as(listColumns.discount).withSchema(tabName),
+  knex.ref(listMapping.date_completed).as(listColumns.date_completed).withSchema(tabName),
+  knex.ref(listMapping.createdAt).as(listColumns.createdAt).withSchema(tabName),
+  knex.ref(listMapping.updatedAt).as(listColumns.updatedAt).withSchema(tabName),
+];
+
 const Lists: Entity<List> = {
-  name: 'List',
-  table_name: 'Lists',
+  name: schemaName,
+  tableName: tabName,
   column: listColumns,
   mapping: listMapping,
+  selectColumsRef: selectColumnsLists,
   reference: [Users],
   allowed: [
     listColumns.name,
@@ -67,40 +81,5 @@ const Lists: Entity<List> = {
     listColumns.date_completed,
   ],
 };
-
-export const selectColumnsLists = [
-  knex
-    .ref(Lists.mapping.uuid)
-    .as(Lists.column.uuid)
-    .withSchema(Lists.table_name),
-  knex
-    .ref(Lists.mapping.name)
-    .as(Lists.column.name)
-    .withSchema(Lists.table_name),
-  knex
-    .ref(Lists.mapping.status)
-    .as(Lists.column.status)
-    .withSchema(Lists.table_name),
-  knex
-    .ref(Lists.mapping.total_list)
-    .as(Lists.column.total_list)
-    .withSchema(Lists.table_name),
-  knex
-    .ref(Lists.mapping.discount)
-    .as(Lists.column.discount)
-    .withSchema(Lists.table_name),
-  knex
-    .ref(Lists.mapping.date_completed)
-    .as(Lists.column.date_completed)
-    .withSchema(Lists.table_name),
-  knex
-    .ref(Lists.mapping.createdAt)
-    .as(Lists.column.createdAt)
-    .withSchema(Lists.table_name),
-  knex
-    .ref(Lists.mapping.updatedAt)
-    .as(Lists.column.updatedAt)
-    .withSchema(Lists.table_name),
-];
 
 export default Lists;

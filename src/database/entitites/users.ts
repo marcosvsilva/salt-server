@@ -33,21 +33,25 @@ const userMaping: SchemaMapping<User> = {
   updatedAt: 'updatedAt',
 };
 
-const Users: Entity<User> = {
-  name: 'User',
-  table_name: 'Users',
-  column: userColumns,
-  mapping: userMaping,
-  allowed: [userColumns.name, userColumns.user_name, userColumns.password],
-};
+const schemaName = 'User';
+const tabName = 'Users';
 
 export const selectColumnsUsers = [
-  knex.ref(Users.mapping.uuid).as(Users.column.uuid),
-  knex.ref(Users.mapping.name).as(Users.column.name),
-  knex.ref(Users.mapping.user_name).as(Users.column.user_name),
-  knex.ref(Users.mapping.password).as(Users.column.password),
-  knex.ref(Users.mapping.createdAt).as(Users.column.createdAt),
-  knex.ref(Users.mapping.updatedAt).as(Users.column.updatedAt),
+  knex.ref(userMaping.uuid).as(userColumns.uuid).withSchema(tabName),
+  knex.ref(userMaping.name).as(userColumns.name).withSchema(tabName),
+  knex.ref(userMaping.user_name).as(userColumns.user_name).withSchema(tabName),
+  knex.ref(userMaping.password).as(userColumns.password).withSchema(tabName),
+  knex.ref(userMaping.createdAt).as(userColumns.createdAt).withSchema(tabName),
+  knex.ref(userMaping.updatedAt).as(userColumns.updatedAt).withSchema(tabName),
 ];
+
+const Users: Entity<User> = {
+  name: schemaName,
+  tableName: tabName,
+  column: userColumns,
+  mapping: userMaping,
+  selectColumsRef: selectColumnsUsers,
+  allowed: [userColumns.name, userColumns.user_name, userColumns.password],
+};
 
 export default Users;

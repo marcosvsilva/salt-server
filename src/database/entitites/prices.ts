@@ -34,21 +34,25 @@ const priceMapping: SchemaMapping<Price> = {
   updatedAt: 'updatedAt',
 };
 
+const schemaName = 'Price';
+const tabName = 'Prices';
+
+const selectColumnsPrices = [
+  knex.ref(priceMapping.uuid).as(priceColumns.uuid).withSchema(tabName),
+  knex.ref(priceMapping.date).as(priceColumns.date).withSchema(tabName),
+  knex.ref(priceMapping.price).as(priceColumns.price).withSchema(tabName),
+  knex.ref(priceMapping.createdAt).as(priceColumns.createdAt).withSchema(tabName),
+  knex.ref(priceMapping.updatedAt).as(priceColumns.updatedAt).withSchema(tabName),
+];
+
 const Prices: Entity<Price> = {
-  name: 'Price',
-  table_name: 'Prices',
+  name: schemaName,
+  tableName: tabName,
   column: priceColumns,
   mapping: priceMapping,
+  selectColumsRef: selectColumnsPrices,
   reference: [Products],
   allowed: [priceColumns.date, priceColumns.price],
 };
-
-export const selectColumnsPrices = [
-  knex.ref(Prices.mapping.uuid).as(Prices.column.uuid).withSchema(Prices.table_name),
-  knex.ref(Prices.mapping.date).as(Prices.column.date).withSchema(Prices.table_name),
-  knex.ref(Prices.mapping.price).as(Prices.column.price).withSchema(Prices.table_name),
-  knex.ref(Prices.mapping.createdAt).as(Prices.column.createdAt).withSchema(Prices.table_name),
-  knex.ref(Prices.mapping.updatedAt).as(Prices.column.updatedAt).withSchema(Prices.table_name),
-];
 
 export default Prices;

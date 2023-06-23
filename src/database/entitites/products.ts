@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import knex from '..';
 import { DatabaseTable, Entity, SchemaMapping } from './database';
 
@@ -31,35 +30,24 @@ const productMapping: SchemaMapping<Product> = {
   updatedAt: 'updatedAt',
 };
 
+const schemaName = 'Product';
+const tabName = 'Products';
+
+const selectColumnsProducts = [
+  knex.ref(productMapping.uuid).as(productColumns.uuid).withSchema(tabName),
+  knex.ref(productMapping.name).as(productColumns.name).withSchema(tabName),
+  knex.ref(productMapping.description).as(productColumns.description).withSchema(tabName),
+  knex.ref(productMapping.createdAt).as(productColumns.createdAt).withSchema(tabName),
+  knex.ref(productMapping.updatedAt).as(productColumns.updatedAt).withSchema(tabName),
+];
+
 const Products: Entity<Product> = {
-  name: 'Product',
-  table_name: 'Products',
+  name: schemaName,
+  tableName: tabName,
   column: productColumns,
   mapping: productMapping,
+  selectColumsRef: selectColumnsProducts,
   allowed: [productColumns.name, productColumns.description],
 };
-
-export const selectColumnsProducts = [
-  knex
-    .ref(Products.mapping.uuid)
-    .as(Products.column.uuid)
-    .withSchema(Products.table_name),
-  knex
-    .ref(Products.mapping.name)
-    .as(Products.column.name)
-    .withSchema(Products.table_name),
-  knex
-    .ref(Products.mapping.description)
-    .as(Products.column.description)
-    .withSchema(Products.table_name),
-  knex
-    .ref(Products.mapping.createdAt)
-    .as(Products.column.createdAt)
-    .withSchema(Products.table_name),
-  knex
-    .ref(Products.mapping.updatedAt)
-    .as(Products.column.updatedAt)
-    .withSchema(Products.table_name),
-];
 
 export default Products;
