@@ -9,18 +9,14 @@ import {
   MissingReferencesFieldsException,
 } from '../exceptions';
 import { isEmpty } from '../utils';
-import { create, getAll, getByID, Ref, remove, update } from './database.controller';
+import { create, getAll, getByID, remove, update } from './database.controller';
 
 /**
  * Index
  */
-export async function baseIndex(
-  res: Response,
-  entity: Entity<DatabaseTable>,
-  selectColumns: Ref,
-): Promise<Response> {
+export async function baseIndex(res: Response, entity: Entity<DatabaseTable>): Promise<Response> {
   try {
-    const entries = await getAll(selectColumns, entity);
+    const entries = await getAll(entity);
     if (entries) {
       if (Array.isArray(entries) && Array.from(entries).length > 0) {
         return res.status(200).json(entries).end();
@@ -42,10 +38,9 @@ export async function baseShow(
   res: Response,
   uuid: string,
   entity: Entity<DatabaseTable>,
-  selectColumns: Ref,
 ): Promise<Response> {
   try {
-    const entry = await getByID(uuid, selectColumns, entity);
+    const entry = await getByID(entity, uuid);
     if (!isEmpty(entry)) {
       return res.status(200).json(entry).end();
     }
@@ -67,11 +62,10 @@ export async function baseCreate(
   res: Response,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
-  selectColumns: Ref,
   emptyResponse = false,
 ): Promise<Response> {
   try {
-    const data = await create(params, entity, selectColumns);
+    const data = await create(entity, params);
     if (!isEmpty(data)) {
       if (emptyResponse) {
         return res.status(201).end();
@@ -100,10 +94,9 @@ export async function baseUpdate(
   uuid: string,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
-  selectColumns: Ref,
 ): Promise<Response> {
   try {
-    const data = await update(params, uuid, entity, selectColumns);
+    const data = await update(entity, params, uuid);
     if (!isEmpty(data)) {
       return res.status(200).json(data).end();
     }
@@ -127,7 +120,7 @@ export async function baseRemove(
   entity: Entity<DatabaseTable>,
 ): Promise<Response> {
   try {
-    const removed = await remove(uuid, entity);
+    const removed = await remove(entity, uuid);
     if (!isEmpty(removed)) {
       return res.status(204).end();
     }

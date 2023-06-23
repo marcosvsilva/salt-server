@@ -18,13 +18,6 @@ import {
   isValidUUID,
 } from '../utils';
 
-export type Ref = Knex.Ref<
-  string,
-  {
-    [x: string]: string;
-  }
->[];
-
 export interface Where {
   field: string;
   operator: string;
@@ -36,17 +29,16 @@ export interface Where {
  *
  */
 export async function getByID(
-  idValue: string,
-  selectColumns: Ref,
   entity: Entity<DatabaseTable>,
+  idValue: string,
 ): Promise<DatabaseTable> {
   if (!isValidUUID(idValue)) {
     throw new InvalidUUIDException();
   }
 
   return knex
-    .select(selectColumns)
-    .from(entity.table_name)
+    .select(entity.selectColumsRef)
+    .from(entity.tableName)
     .where(entity.mapping.uuid, idValue)
     .limit(1)
     .first()
@@ -71,11 +63,10 @@ export async function getByID(
  *
  */
 export async function getAll(
-  selectColumns: Ref,
   entity: Entity<DatabaseTable>,
   where?: Where[],
 ): Promise<DatabaseTable[]> {
-  let query = knex.select(selectColumns).from(entity.table_name);
+  let query = knex.select(entity.selectColumsRef).from(entity.tableName);
 
   if (where && where?.length > 0) {
     Array.from(where).forEach((condition) => {
@@ -120,9 +111,8 @@ function referenceFieldsIsValid(
 }
 
 export async function create(
-  _params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
-  selectColumns: Ref,
+  _params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
 ): Promise<DatabaseTable> {
   if (!_params) {
     throw new MissingParamsException();
@@ -142,12 +132,12 @@ export async function create(
     .transaction(async (trx: Knex.Transaction) => {
       return trx
         .insert(params)
-        .into(entity.table_name)
+        .into(entity.tableName)
         .limit(1)
         .then(() =>
           trx
-            .select(selectColumns)
-            .from(entity.table_name)
+            .select(entity.selectColumsRef)
+            .from(entity.tableName)
             .where(entity.mapping.uuid, uuid)
             .limit(1)
             .first(),
@@ -170,10 +160,9 @@ export async function create(
  *
  */
 export async function update(
+  entity: Entity<DatabaseTable>,
   _params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   uuid: string,
-  entity: Entity<DatabaseTable>,
-  selectColumns: Ref,
 ): Promise<DatabaseTable> {
   if (!isValidUUID(uuid)) {
     throw new InvalidUUIDException();
@@ -188,14 +177,14 @@ export async function update(
 
   return knex
     .transaction(async (trx: Knex.Transaction) => {
-      return trx(entity.table_name)
+      return trx(entity.tableName)
         .update(params)
         .where(entity.mapping.uuid, uuid)
         .limit(1)
         .then(() =>
           trx
-            .select(selectColumns)
-            .from(entity.table_name)
+            .select(entity.selectColumsRef)
+            .from(entity.tableName)
             .where(entity.mapping.uuid, uuid)
             .limit(1)
             .first(),
@@ -217,12 +206,12 @@ export async function update(
  * Remove
  *
  */
-export async function remove(uuid: string, entity: Entity<DatabaseTable>): Promise<boolean> {
+export async function remove(entity: Entity<DatabaseTable>, uuid: string): Promise<boolean> {
   if (!isValidUUID(uuid)) {
     throw new InvalidUUIDException();
   }
 
-  return knex(entity.table_name)
+  return knex(entity.tableName)
     .where(entity.mapping.uuid, uuid)
     .limit(1)
     .delete()

@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 
-import Prices, { selectColumnsPrices } from '../database/entitites/prices';
+import Prices from '../database/entitites/prices';
 import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 /**
  * @route GET /api/prices
  */
 export async function index(req: Request, res: Response): Promise<Response> {
-  return baseIndex(res, Prices, selectColumnsPrices);
+  return baseIndex(res, Prices);
 }
 
 /**
@@ -15,14 +15,14 @@ export async function index(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function show(req: Request, res: Response): Promise<Response> {
-  return baseShow(res, req.params.uuid, Prices, selectColumnsPrices);
+  return baseShow(res, req.params.uuid, Prices);
 }
 
 /**
  * @route POST /api/prices
  */
 export async function create(req: Request, res: Response): Promise<Response> {
-  return baseCreate(res, req.body, Prices, selectColumnsPrices);
+  return baseCreate(res, req.body, Prices);
 }
 
 /**
@@ -30,7 +30,7 @@ export async function create(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function update(req: Request, res: Response): Promise<Response> {
-  return baseUpdate(res, req.params.uuid, req.body, Prices, selectColumnsPrices);
+  return baseUpdate(res, req.params.uuid, req.body, Prices);
 }
 
 /**

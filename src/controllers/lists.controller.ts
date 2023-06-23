@@ -2,18 +2,14 @@ import { Request, Response } from 'express';
 import { JsonObject } from 'type-fest';
 
 import knex from '../database';
-import ListProducts, {
-  selectColumnsListProducts,
-  StatusListProduct,
-} from '../database/entitites/list_products';
-import Lists, { List, selectColumnsLists } from '../database/entitites/lists';
+import ListProducts, { StatusListProduct } from '../database/entitites/list_products';
+import Lists, { List } from '../database/entitites/lists';
 import Products from '../database/entitites/products';
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
-import { MESSAGE_INVALID_UUID } from '../exceptions/invalid_UUID';
 import { formatReferenceFieldUUId, isEmpty, isValidUUID } from '../utils';
 import { baseRemove, baseUpdate } from './application.controller';
 import {
@@ -28,7 +24,7 @@ import { getAllByList } from './products.controller';
  */
 export async function index(req: Request, res: Response): Promise<Response> {
   try {
-    const lists = await databaseIndex(selectColumnsLists, Lists);
+    const lists = await databaseIndex(Lists);
 
     for (const indexList in lists) {
       if (lists[indexList]) {
@@ -52,21 +48,18 @@ export async function index(req: Request, res: Response): Promise<Response> {
  */
 export async function show(req: Request, res: Response): Promise<Response> {
   try {
-    if (req.params && req.params.uuid) {
-      const list = await databaseShow(req.params.uuid, selectColumnsLists, Lists);
+    const list = await databaseShow(Lists, req.params.uuid);
 
-      if (!isEmpty(list)) {
-        const products = await getAllByList((list as List).uuid);
+    if (!isEmpty(list)) {
+      const products = await getAllByList((list as List).uuid);
 
-        if (products) {
-          (list as List).products = products;
-        }
-
-        return res.status(200).json(list).end();
+      if (products) {
+        (list as List).products = products;
       }
-      return res.status(404).end();
+
+      return res.status(200).json(list).end();
     }
-    return res.status(400).end();
+    return res.status(404).end();
   } catch (error) {
     if (error instanceof InvalidUUIDException) {
       return res.status(400).message(error.message).end();
@@ -81,25 +74,24 @@ export async function show(req: Request, res: Response): Promise<Response> {
  */
 export async function create(req: Request, res: Response): Promise<Response | void> {
   try {
-    if (req.body) {
-      const list = await databaseCreate(req.body, Lists, selectColumnsLists);
+    const list = await databaseCreate(Lists, req.body);
 
-      if (list) {
-        const linked = await linkProducts((list as List).uuid, req.body.products as string[]);
-        if (linked) {
-          return res.status(201).json(list).end();
-        }
+    if (list) {
+      const linked = await linkProducts((list as List).uuid, req.body.products as string[]);
+      if (linked) {
+        return res.status(201).json(list).end();
       }
     }
     return res.status(400).end();
   } catch (error) {
-    console.error(error);
     if (
       error instanceof MissingParamsException ||
-      error instanceof MissingReferencesFieldsException
+      error instanceof MissingReferencesFieldsException ||
+      error instanceof InvalidUUIDException
     ) {
       return res.status(400).json(error.message).end();
     }
+    console.error(error);
     return res.status(500).end();
   }
 }
@@ -110,14 +102,15 @@ export async function create(req: Request, res: Response): Promise<Response | vo
  */
 export async function update(req: Request, res: Response): Promise<Response> {
   try {
-    if (req.params && req.params.uuid) {
-      if (req.body && req.body.products) {
-        await updateProductsList(req.params.uuid, req.body.products);
-      }
-      return await baseUpdate(res, req.params.uuid, req.body, Lists, selectColumnsLists);
+    const updatedProducts = await updateProductsList(req.params.uuid, req.body.products);
+    if (updatedProducts) {
+      return await baseUpdate(res, req.params.uuid, req.body, Lists);
     }
-    return req.status(400).end();
+    return res.status(400).end();
   } catch (error) {
+    if (error instanceof InvalidUUIDException) {
+      return res.status(400).json(error.message).end();
+    }
     console.log(error);
     return res.status(500).end();
   }
@@ -128,18 +121,24 @@ export async function update(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function remove(req: Request, res: Response): Promise<Response | void> {
-  if (req.params && req.params.uuid) {
+  try {
     const removed = await removeProductsList(req.params.uuid);
     if (removed) {
-      return baseRemove(res, req.params.uuid, Lists);
+      return await baseRemove(res, req.params.uuid, Lists);
     }
+    return res.status(400).end();
+  } catch (error) {
+    if (error instanceof InvalidUUIDException) {
+      return res.status(400).json(error.message).end();
+    }
+    console.error(error);
+    return res.status(500).end();
   }
-  return res.status(400).json(MESSAGE_INVALID_UUID).end();
 }
 
 async function updateProductsList(listUUID: string, products: string[]): Promise<boolean> {
   if (!isValidUUID(listUUID)) {
-    return false;
+    throw new InvalidUUIDException();
   }
 
   let result = true;
@@ -155,7 +154,7 @@ async function updateProductsList(listUUID: string, products: string[]): Promise
 
 async function linkProducts(listUUID: string, products: string[]): Promise<boolean> {
   if (!isValidUUID(listUUID)) {
-    return false;
+    throw new InvalidUUIDException();
   }
 
   let result = true;
@@ -168,7 +167,7 @@ async function linkProducts(listUUID: string, products: string[]): Promise<boole
         status: JSON.stringify(StatusListProduct.Create),
       };
 
-      const listProduct = await databaseCreate(form, ListProducts, selectColumnsListProducts);
+      const listProduct = await databaseCreate(ListProducts, form);
       result = !isEmpty(listProduct);
       if (!result) {
         console.error(`Error to link product: ${products[indexProduct]} in ${listUUID} list`);
@@ -180,7 +179,7 @@ async function linkProducts(listUUID: string, products: string[]): Promise<boole
 
 async function removeProductsList(listUUID: string): Promise<boolean> {
   if (!isValidUUID(listUUID)) {
-    return false;
+    throw new InvalidUUIDException();
   }
 
   const products = await getAllByList(listUUID);
@@ -188,7 +187,7 @@ async function removeProductsList(listUUID: string): Promise<boolean> {
   let result = true;
   products.forEach((prod) => {
     if (result) {
-      knex(ListProducts.table_name)
+      knex(ListProducts.tableName)
         .where(formatReferenceFieldUUId(Lists), listUUID)
         .where(formatReferenceFieldUUId(Products), prod.uuid)
         .limit(1)

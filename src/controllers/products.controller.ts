@@ -3,16 +3,16 @@ import { Request, Response } from 'express';
 import knex from '../database';
 import ListProducts from '../database/entitites/list_products';
 import Lists from '../database/entitites/lists';
-import Products, { Product, selectColumnsProducts } from '../database/entitites/products';
+import Products, { Product } from '../database/entitites/products';
 import { InvalidUUIDException } from '../exceptions';
-import { deserialize, formatReferenceFieldUUId, isEmpty, isValidUUID } from '../utils';
+import { deserialize, formatReferenceFieldUUId, isValidUUID } from '../utils';
 import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 /**
  * @route GET /api/products
  */
 export async function index(req: Request, res: Response): Promise<Response> {
-  return baseIndex(res, Products, selectColumnsProducts);
+  return baseIndex(res, Products);
 }
 
 /**
@@ -20,14 +20,14 @@ export async function index(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function show(req: Request, res: Response): Promise<Response> {
-  return baseShow(res, req.params.uuid, Products, selectColumnsProducts);
+  return baseShow(res, req.params.uuid, Products);
 }
 
 /**
  * @route POST /api/products
  */
 export async function create(req: Request, res: Response): Promise<Response> {
-  return baseCreate(res, req.body, Products, selectColumnsProducts);
+  return baseCreate(res, req.body, Products);
 }
 
 /**
@@ -35,7 +35,7 @@ export async function create(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function update(req: Request, res: Response): Promise<Response> {
-  return baseUpdate(res, req.params.uuid, req.body, Products, selectColumnsProducts);
+  return baseUpdate(res, req.params.uuid, req.body, Products);
 }
 
 /**
@@ -52,15 +52,15 @@ export async function getAllByList(list_uuid: string): Promise<Product[]> {
   }
 
   return knex
-    .select(selectColumnsProducts)
-    .from(ListProducts.table_name)
+    .select(Products.selectColumsRef)
+    .from(ListProducts.tableName)
     .leftJoin(
-      Products.table_name,
-      `${ListProducts.table_name}.${formatReferenceFieldUUId(Products)}`,
+      Products.tableName,
+      `${ListProducts.tableName}.${formatReferenceFieldUUId(Products)}`,
       '=',
-      `${Products.table_name}.${Products.mapping.uuid}`,
+      `${Products.tableName}.${Products.mapping.uuid}`,
     )
-    .where(`${ListProducts.table_name}.${formatReferenceFieldUUId(Lists)}`, list_uuid)
+    .where(`${ListProducts.tableName}.${formatReferenceFieldUUId(Lists)}`, list_uuid)
     .then((entries) => {
       const files = deserialize(entries, Products);
       if (Array.isArray(files)) {
