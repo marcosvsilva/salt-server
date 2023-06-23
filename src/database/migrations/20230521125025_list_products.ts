@@ -7,13 +7,13 @@ import Products from '../entitites/products';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema
-    .hasTable(ListProducts.table_name)
+    .hasTable(ListProducts.tableName)
     .then((exists) => {
       if (exists) {
-        throw new Error(`Table ${ListProducts.table_name} already exists`);
+        throw new Error(`Table ${ListProducts.tableName} already exists`);
       }
 
-      return knex.schema.createTable(ListProducts.table_name, (table) => {
+      return knex.schema.createTable(ListProducts.tableName, (table) => {
         // Identity
         table.increments(ListProducts.mapping.id).primary();
         table.uuid(ListProducts.mapping.uuid).unique().notNullable();
@@ -23,14 +23,14 @@ export async function up(knex: Knex): Promise<void> {
           .uuid(formatReferenceFieldUUId(Products))
           .unsigned()
           .references(Products.mapping.uuid)
-          .inTable(Products.table_name)
+          .inTable(Products.tableName)
           .notNullable();
 
         table
           .uuid(formatReferenceFieldUUId(Lists))
           .unsigned()
           .references(Lists.mapping.uuid)
-          .inTable(Lists.table_name)
+          .inTable(Lists.tableName)
           .notNullable();
 
         // Colums
@@ -46,5 +46,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists(ListProducts.table_name);
+  return knex.schema.dropTableIfExists(ListProducts.tableName);
 }

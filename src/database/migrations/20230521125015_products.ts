@@ -4,13 +4,13 @@ import Products from '../entitites/products';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema
-    .hasTable(Products.table_name)
+    .hasTable(Products.tableName)
     .then((exists) => {
       if (exists) {
-        throw new Error(`Table ${Products.table_name} already exists`);
+        throw new Error(`Table ${Products.tableName} already exists`);
       }
 
-      return knex.schema.createTable(Products.table_name, (table) => {
+      return knex.schema.createTable(Products.tableName, (table) => {
         // Identity
         table.increments(Products.mapping.id).primary();
         table.uuid(Products.mapping.uuid).unique().notNullable();
@@ -28,5 +28,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists(Products.table_name);
+  return knex.schema.dropTableIfExists(Products.tableName);
 }

@@ -6,13 +6,13 @@ export async function up(knex: Knex): Promise<void> {
   // const jsonType = knex.client.config.client in ['sqlite3', 'oracledb'] ? 'json' : 'jsonb';
 
   return knex.schema
-    .hasTable(Users.table_name)
+    .hasTable(Users.tableName)
     .then((exists) => {
       if (exists) {
-        throw new Error(`Table ${Users.table_name} already exists`);
+        throw new Error(`Table ${Users.tableName} already exists`);
       }
 
-      return knex.schema.createTable(Users.table_name, (table) => {
+      return knex.schema.createTable(Users.tableName, (table) => {
         // Identity
         table.increments(Users.mapping.id).primary();
         table.uuid(Users.mapping.uuid).unique().notNullable();
@@ -31,5 +31,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.dropTableIfExists(Users.table_name);
+  return knex.schema.dropTableIfExists(Users.tableName);
 }
