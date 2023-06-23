@@ -6,7 +6,7 @@ import knex from '../database';
 import { DatabaseTable, Entity } from '../database/entitites/database';
 
 export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
-  return `${entity.table_name.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
+  return `${entity.tableName.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
 }
 
 function processKeys(
