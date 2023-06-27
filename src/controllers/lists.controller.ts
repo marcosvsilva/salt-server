@@ -3,43 +3,25 @@ import { JsonObject } from 'type-fest';
 
 import knex from '../database';
 import ListProducts, { StatusListProduct } from '../database/entitites/list_products';
-import Lists, { List } from '../database/entitites/lists';
+import Lists from '../database/entitites/lists';
 import Products from '../database/entitites/products';
+import { List } from '../database/models';
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
 import { formatReferenceFieldUUId, isEmpty, isValidUUID } from '../utils';
-import { baseRemove, baseUpdate } from './application.controller';
-import {
-  create as databaseCreate,
-  getAll as databaseIndex,
-  getByID as databaseShow,
-} from './database.controller';
-import { getAllByList } from './products.controller';
+import { baseIndex, baseRemove, baseUpdate } from './application.controller';
+import { create as databaseCreate, getByID as databaseShow } from './database.controller';
+import { getAllByList as getAllProductsByList } from './products.controller';
+import { getByList as getProductByList } from './users.controller';
 
 /**
  * @route GET /api/lists
  */
 export async function index(req: Request, res: Response): Promise<Response> {
-  try {
-    const lists = await databaseIndex(Lists);
-
-    for (const indexList in lists) {
-      if (lists[indexList]) {
-        const products = await getAllByList((lists[indexList] as List).uuid);
-
-        if (products) {
-          (lists[indexList] as List).products = products;
-        }
-      }
-    }
-    return res.status(200).json(lists).end();
-  } catch (error) {
-    console.error(error);
-    return res.status(500).end();
-  }
+  return baseIndex(res, Lists);
 }
 
 /**
@@ -47,26 +29,7 @@ export async function index(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function show(req: Request, res: Response): Promise<Response> {
-  try {
-    const list = await databaseShow(Lists, req.params.uuid);
-
-    if (!isEmpty(list)) {
-      const products = await getAllByList((list as List).uuid);
-
-      if (products) {
-        (list as List).products = products;
-      }
-
-      return res.status(200).json(list).end();
-    }
-    return res.status(404).end();
-  } catch (error) {
-    if (error instanceof InvalidUUIDException) {
-      return res.status(400).message(error.message).end();
-    }
-    console.log(error);
-    return res.status(500).end();
-  }
+  return baseIndex(res, Lists);
 }
 
 /**
@@ -182,7 +145,7 @@ async function removeProductsList(listUUID: string): Promise<boolean> {
     throw new InvalidUUIDException();
   }
 
-  const products = await getAllByList(listUUID);
+  const products = await getAllProductsByList(listUUID);
 
   let result = true;
   products.forEach((prod) => {
