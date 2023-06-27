@@ -1,17 +1,6 @@
 import knex from '..';
-import { DatabaseTable, Entity, SchemaMapping } from './database';
-
-export interface User extends DatabaseTable {
-  name: string;
-  user_name: string;
-  password: string;
-
-  // database
-  id: number;
-  uuid: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { User } from '../models';
+import { Entity, SchemaMapping } from './database';
 
 const userColumns: SchemaMapping<User> = {
   id: 'id',

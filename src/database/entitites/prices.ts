@@ -1,20 +1,7 @@
 import knex from '..';
-import { DatabaseTable, Entity, SchemaMapping } from './database';
+import { Price } from '../models';
+import { Entity, SchemaMapping } from './database';
 import Products from './products';
-
-export interface Price extends DatabaseTable {
-  date: Date;
-  price: number;
-
-  // database
-  id: number;
-  uuid: string;
-  createdAt: Date;
-  updatedAt: Date;
-
-  // references
-  prices?: Price[];
-}
 
 const priceColumns: SchemaMapping<Price> = {
   id: 'id',
