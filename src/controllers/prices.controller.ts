@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 
+import knex from '../database';
 import Prices from '../database/entitites/prices';
+import Products from '../database/entitites/products';
+import { Price } from '../database/models';
+import { InvalidUUIDException } from '../exceptions';
+import { deserialize, formatReferenceFieldUUId, isValidUUID } from '../utils';
 import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 /**
@@ -39,4 +44,31 @@ export async function update(req: Request, res: Response): Promise<Response> {
  */
 export async function remove(req: Request, res: Response): Promise<Response> {
   return baseRemove(res, req.params.uuid, Prices);
+}
+
+export async function getAllByProduct(product_uuid: string): Promise<Price[]> {
+  if (!isValidUUID(product_uuid)) {
+    throw new InvalidUUIDException();
+  }
+
+  return knex
+    .select(Prices.selectColumsRef)
+    .from(Prices.tableName)
+    .leftJoin(
+      Products.tableName,
+      `${Prices.tableName}.${formatReferenceFieldUUId(Products)}`,
+      `${Products.tableName}.${Products.mapping.uuid}`,
+    )
+    .where(`${Products.tableName}.${Products.mapping.uuid}`, product_uuid)
+    .orderBy(`${Prices.tableName}.${Prices.mapping.date}`, 'desc')
+    .then((entries) => {
+      const files = deserialize(entries, Products);
+      if (Array.isArray(files)) {
+        return files as Price[];
+      }
+      return [files] as Price[];
+    })
+    .catch((error: Error) => {
+      throw error;
+    });
 }
