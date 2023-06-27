@@ -29,7 +29,30 @@ export async function index(req: Request, res: Response): Promise<Response> {
  * @param {string} uuid
  */
 export async function show(req: Request, res: Response): Promise<Response> {
-  return baseIndex(res, Lists);
+  try {
+    const list = await databaseShow(Lists, req.params.uuid);
+
+    if (!isEmpty(list)) {
+      const products = await getAllProductsByList((list as List).uuid);
+      if (products) {
+        (list as List).products = products;
+      }
+
+      const user = await getProductByList((list as List).uuid);
+      if (user) {
+        (list as List).user = user;
+      }
+
+      return res.status(200).json(list).end();
+    }
+    return res.status(404).end();
+  } catch (error) {
+    if (error instanceof InvalidUUIDException) {
+      return res.status(400).message(error.message).end();
+    }
+    console.log(error);
+    return res.status(500).end();
+  }
 }
 
 /**
