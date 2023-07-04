@@ -1,24 +1,8 @@
 import knex from '..';
-import { DatabaseTable, Entity, SchemaMapping } from './database';
+import { ListProduct } from '../models';
+import { Entity, SchemaMapping } from './database';
 import Lists from './lists';
 import Products from './products';
-
-export enum StatusListProduct {
-  Create = 0,
-  InQueue = 1,
-  Bought = 2,
-}
-
-export interface ListProduct extends DatabaseTable {
-  date: Date;
-  status: StatusListProduct;
-
-  // database
-  id: number;
-  uuid: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 const listProductColumns: SchemaMapping<ListProduct> = {
   id: 'id',
