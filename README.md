@@ -2,7 +2,7 @@ SALT is a shopping list application that to be a code showcase with the followin
 
 This repository is responsible for the backend project
 
-### This project is written in Node and TypeScript and uses those libraries and frameworks:
+This project is written in Node and TypeScript and uses those libraries and frameworks:
 
 - NPM;
 - Node;
