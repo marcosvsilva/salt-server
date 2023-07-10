@@ -56,7 +56,7 @@ router.delete(`${routerPrices}/:uuid`, pricesController.remove);
  */
 
 router.get('/', (req: Request, res: Response) =>
-  res.status(200).json({ message: 'Salt Software' }),
+  res.status(200).json({ message: 'Salt Software' })
 );
 
 /**

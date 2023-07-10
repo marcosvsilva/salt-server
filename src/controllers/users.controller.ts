@@ -57,7 +57,7 @@ export async function getByList(list_uuid: string): Promise<User> {
     .leftJoin(
       Lists.tableName,
       `${Lists.tableName}.${formatReferenceFieldUUId(Users)}`,
-      `${Users.tableName}.${Users.mapping.uuid}`,
+      `${Users.tableName}.${Users.mapping.uuid}`
     )
     .where(`${Lists.tableName}.${Lists.mapping.uuid}`, list_uuid)
     .limit(1)

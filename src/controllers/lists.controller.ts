@@ -2,10 +2,11 @@ import { Request, Response } from 'express';
 import { JsonObject } from 'type-fest';
 
 import knex from '../database';
-import ListProducts, { StatusListProduct } from '../database/entitites/list_products';
+import ListProducts from '../database/entitites/list_products';
 import Lists from '../database/entitites/lists';
 import Products from '../database/entitites/products';
 import { List } from '../database/models';
+import { StatusListProduct } from '../database/models/list_product';
 import {
   InvalidUUIDException,
   MissingParamsException,

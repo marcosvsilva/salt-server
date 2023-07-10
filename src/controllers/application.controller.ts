@@ -37,7 +37,7 @@ export async function baseIndex(res: Response, entity: Entity<DatabaseTable>): P
 export async function baseShow(
   res: Response,
   uuid: string,
-  entity: Entity<DatabaseTable>,
+  entity: Entity<DatabaseTable>
 ): Promise<Response> {
   try {
     const entry = await getByID(entity, uuid);
@@ -62,7 +62,7 @@ export async function baseCreate(
   res: Response,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
-  emptyResponse = false,
+  emptyResponse = false
 ): Promise<Response> {
   try {
     const data = await create(entity, params);
@@ -93,7 +93,7 @@ export async function baseUpdate(
   res: Response,
   uuid: string,
   params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-  entity: Entity<DatabaseTable>,
+  entity: Entity<DatabaseTable>
 ): Promise<Response> {
   try {
     const data = await update(entity, params, uuid);
@@ -117,7 +117,7 @@ export async function baseUpdate(
 export async function baseRemove(
   res: Response,
   uuid: string,
-  entity: Entity<DatabaseTable>,
+  entity: Entity<DatabaseTable>
 ): Promise<Response> {
   try {
     const removed = await remove(entity, uuid);

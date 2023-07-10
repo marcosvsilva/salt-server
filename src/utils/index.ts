@@ -11,7 +11,7 @@ export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string 
 
 function processKeys(
   _object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-  entity: Entity<DatabaseTable>,
+  entity: Entity<DatabaseTable>
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> {
   let object = { ..._object };
 
@@ -48,7 +48,7 @@ function processKeys(
 
 export const filterParams = (
   object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-  entity: Entity<DatabaseTable>,
+  entity: Entity<DatabaseTable>
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> => {
   return processKeys(object, entity);
 };
@@ -56,7 +56,7 @@ export const filterParams = (
 export const addIdentifiers = (
   _object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
-  defaultUuid: string | undefined = undefined,
+  defaultUuid: string | undefined = undefined
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> => {
   const object = { ..._object };
 
@@ -78,7 +78,7 @@ export const addIdentifiers = (
 export const addTimestamps = (
   _object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
   entity: Entity<DatabaseTable>,
-  method: 'create' | 'update' = 'update',
+  method: 'create' | 'update' = 'update'
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> => {
   const object = { ..._object };
   if (method === 'create' && 'createdAt' in entity.mapping) {
@@ -114,7 +114,7 @@ export function cast(entry: DatabaseTable, entity: Entity<DatabaseTable>): Datab
 
 export const deserialize = (
   _data: DatabaseTable | DatabaseTable[],
-  entity: Entity<DatabaseTable>,
+  entity: Entity<DatabaseTable>
 ): DatabaseTable | DatabaseTable[] => {
   if (Array.isArray(_data)) {
     return _data.map((entry) => cast(entry, entity));
@@ -126,7 +126,7 @@ export const deserialize = (
 };
 
 export const isEmpty = (
-  varX: JsonObject | DatabaseTable | JsonArray | string | number | boolean | undefined,
+  varX: JsonObject | DatabaseTable | JsonArray | string | number | boolean | undefined
 ): boolean => {
   const undef = undefined;
   const emptyValues = [undef, null, false, 0, '', '0', 'undefined'];
@@ -146,7 +146,7 @@ export const isEmpty = (
 
 export function getEnumByValue<T extends string | number>(
   enumObject: { [x: string]: T },
-  value: T,
+  value: T
 ): string {
   return Object.keys(enumObject).find((key) => enumObject[key] === value) || '';
 }

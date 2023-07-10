@@ -57,7 +57,7 @@ export async function getAllByProduct(product_uuid: string): Promise<Price[]> {
     .leftJoin(
       Products.tableName,
       `${Prices.tableName}.${formatReferenceFieldUUId(Products)}`,
-      `${Products.tableName}.${Products.mapping.uuid}`,
+      `${Products.tableName}.${Products.mapping.uuid}`
     )
     .where(`${Products.tableName}.${Products.mapping.uuid}`, product_uuid)
     .orderBy(`${Prices.tableName}.${Prices.mapping.date}`, 'desc')

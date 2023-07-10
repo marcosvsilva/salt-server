@@ -78,7 +78,7 @@ export async function getAllByList(list_uuid: string): Promise<Product[]> {
     .leftJoin(
       Products.tableName,
       `${ListProducts.tableName}.${formatReferenceFieldUUId(Products)}`,
-      `${Products.tableName}.${Products.mapping.uuid}`,
+      `${Products.tableName}.${Products.mapping.uuid}`
     )
     .where(`${ListProducts.tableName}.${formatReferenceFieldUUId(Lists)}`, list_uuid)
     .then(async (entries) => {
@@ -93,7 +93,7 @@ export async function getAllByList(list_uuid: string): Promise<Product[]> {
               tmProduct.prices = prices;
             }
             return tmProduct;
-          }),
+          })
         );
       }
       const prices = await getAllPricesByProduct((files as Product).uuid);
