@@ -19,7 +19,7 @@ if (process.env.DB_CLIENT) {
   knex
     .raw(dummyQuery)
     .then(() => {
-      console.log(`💾 [database] Connected! { client: ${knex.client.config.client} }`);
+      console.log(`💾 [database] ✅: { client: ${knex.client.config.client} }`);
     })
     .catch((error) => {
       console.error(`💾 [database] 💥: ${error.message}`);
