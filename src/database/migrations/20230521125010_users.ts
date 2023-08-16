@@ -18,9 +18,13 @@ export async function up(knex: Knex): Promise<void> {
         table.uuid(Users.mapping.uuid).unique().notNullable();
 
         // Colums
-        table.string(Users.mapping.name).notNullable();
+        table.string(Users.mapping.first_name).notNullable();
+        table.string(Users.mapping.last_name).notNullable();
         table.string(Users.mapping.user_name).notNullable();
         table.string(Users.mapping.password).notNullable();
+        table.dateTime(Users.mapping.birthday);
+        table.string(Users.mapping.email).notNullable();
+        table.string(Users.mapping.contact);
 
         // Controls
         table.dateTime(Users.mapping.createdAt).notNullable().defaultTo(knex.fn.now());
