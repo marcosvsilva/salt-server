@@ -1,9 +1,9 @@
 # Salt Software - Backend
 
 Welcome to Salt Software, the platform for managing shopping lists intelligently.
-Our platform offers features including list creation, price tracking, historical shopping comparisons, and even intelligent suggestions for cost-effective shopping destinations
+Our platform offers features including list creation, price tracking, historical shopping comparisons, and even intelligent suggestions for cost-effective shopping destinations.
 
-This repository is responsible for the backend project
+This repository is responsible for the backend project.
 
 ## Stacks
 
