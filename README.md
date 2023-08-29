@@ -19,8 +19,6 @@ This project is written in Node and TypeScript and uses those libraries and fram
 
 ## Getting Started
 
-This repository provides the essential Docker Compose files for deploying the platform.
-
 To run salt-server, follow these steps:
 
 1. Get this repository.
