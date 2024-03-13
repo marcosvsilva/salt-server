@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 
+import knex from '../database';
+import ListProducts from '../database/entitites/list_products';
+import Lists from '../database/entitites/lists';
+import Products from '../database/entitites/products';
 import { InvalidUUIDException } from '../exceptions';
 import { deserialize, formatReferenceFieldUUId, isEmpty, isValidUUID } from '../helpers';
-import knex from '../repository';
-import ListProducts from '../repository/entitites/list_products';
-import Lists from '../repository/entitites/lists';
-import Products from '../repository/entitites/products';
-import { Product } from '../repository/models';
+import { Product } from '../models';
 import { baseCreate, baseIndex, baseRemove, baseUpdate } from './application.controller';
 import { getByID as databaseShow } from './database.controller';
 import { getAllByProduct as getAllPricesByProduct } from './prices.controller';

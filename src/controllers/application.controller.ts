@@ -2,14 +2,14 @@ import { Response } from 'express';
 import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
+import { DatabaseTable, Entity } from '../database/entitites/database';
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
 import { isEmpty } from '../helpers';
-import { DatabaseTable, Entity } from '../repository/entitites/database';
-import { create, getAll, getByID, remove, update } from './database.controller';
+import { create, getAll, getByID, delete, update } from './database.controller';
 
 /**
  * Index
@@ -120,7 +120,7 @@ export async function baseRemove(
   entity: Entity<DatabaseTable>
 ): Promise<Response> {
   try {
-    const removed = await remove(entity, uuid);
+    const removed = await delete(entity, uuid);
     if (!isEmpty(removed)) {
       return res.status(204).end();
     }

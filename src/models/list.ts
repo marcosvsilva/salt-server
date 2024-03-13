@@ -1,4 +1,4 @@
-import { DatabaseTable } from '../entitites/database';
+import { DatabaseTable } from '../database/entitites/database';
 import { Product } from './product';
 import { User } from './user';
 

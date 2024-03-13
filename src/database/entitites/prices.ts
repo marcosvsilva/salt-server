@@ -1,5 +1,5 @@
+import { Price } from '../../models';
 import knex from '..';
-import { Price } from '../models';
 import { Entity, SchemaMapping } from './database';
 import Products from './products';
 

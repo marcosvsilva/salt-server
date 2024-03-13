@@ -1,5 +1,5 @@
+import { User } from '../../models';
 import knex from '..';
-import { User } from '../models';
 import { Entity, SchemaMapping } from './database';
 
 const userColumns: SchemaMapping<User> = {

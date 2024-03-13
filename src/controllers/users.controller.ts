@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
+import knex from '../database';
+import Lists from '../database/entitites/lists';
+import Users from '../database/entitites/users';
 import { InvalidUUIDException } from '../exceptions';
 import { deserialize, formatReferenceFieldUUId, isValidUUID } from '../helpers';
-import knex from '../repository';
-import Lists from '../repository/entitites/lists';
-import Users from '../repository/entitites/users';
-import { User } from '../repository/models';
+import { User } from '../models';
 import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 /**

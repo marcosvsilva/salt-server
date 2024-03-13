@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
+import knex from '../database';
+import Prices from '../database/entitites/prices';
+import Products from '../database/entitites/products';
 import { InvalidUUIDException } from '../exceptions';
 import { deserialize, formatReferenceFieldUUId, isValidUUID } from '../helpers';
-import knex from '../repository';
-import Prices from '../repository/entitites/prices';
-import Products from '../repository/entitites/products';
-import { Price } from '../repository/models';
+import { Price } from '../models';
 import { baseCreate, baseIndex, baseRemove, baseShow, baseUpdate } from './application.controller';
 
 /**

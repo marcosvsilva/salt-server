@@ -1,4 +1,4 @@
-import { DatabaseTable } from '../entitites/database';
+import { DatabaseTable } from '../database/entitites/database';
 
 export enum StatusListProduct {
   Create = 0,

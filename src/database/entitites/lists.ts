@@ -1,5 +1,5 @@
+import { List } from '../../models';
 import knex from '..';
-import { List } from '../models';
 import { Entity, SchemaMapping } from './database';
 import Users from './users';
 

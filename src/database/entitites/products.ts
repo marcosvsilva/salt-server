@@ -1,5 +1,5 @@
+import { Product } from '../../models';
 import knex from '..';
-import { Product } from '../models';
 import { Entity, SchemaMapping } from './database';
 
 const productColumns: SchemaMapping<Product> = {
