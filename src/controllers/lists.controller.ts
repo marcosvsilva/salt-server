@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
 import { JsonObject } from 'type-fest';
 
-import knex from '../database';
-import ListProducts from '../database/entitites/list_products';
-import Lists from '../database/entitites/lists';
-import Products from '../database/entitites/products';
-import { List } from '../database/models';
-import { StatusListProduct } from '../database/models/list_product';
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
-import { formatReferenceFieldUUId, isEmpty, isValidUUID } from '../utils';
+import { formatReferenceFieldUUId, isEmpty, isValidUUID } from '../helpers';
+import knex from '../repository';
+import ListProducts from '../repository/entitites/list_products';
+import Lists from '../repository/entitites/lists';
+import Products from '../repository/entitites/products';
+import { List } from '../repository/models';
+import { StatusListProduct } from '../repository/models/list_product';
 import { baseIndex, baseRemove, baseUpdate } from './application.controller';
 import { create as databaseCreate, getByID as databaseShow } from './database.controller';
 import { getAllByList as getAllProductsByList } from './products.controller';
