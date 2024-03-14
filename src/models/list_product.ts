@@ -1,3 +1,5 @@
+import { DatabaseTable } from './database';
+
 export enum StatusListProduct {
   Create = 0,
   InQueue = 1,
