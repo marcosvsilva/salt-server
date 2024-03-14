@@ -1,4 +1,4 @@
-import { DatabaseTable } from '../database/entitites/database';
+import { DatabaseTable } from './database';
 
 export interface Price extends DatabaseTable {
   date: Date;

@@ -2,13 +2,13 @@ import { Response } from 'express';
 import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
-import { DatabaseTable, Entity } from '../database/entitites/database';
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
 import { isEmpty } from '../helpers';
+import { DatabaseTable, Entity } from '../models/database';
 import { create, getAll, getByID, remove, update } from './database.controller';
 
 /**

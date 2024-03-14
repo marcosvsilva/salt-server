@@ -1,6 +1,6 @@
 import { Price } from '../../models';
+import { Entity, SchemaMapping } from '../../models/database';
 import knex from '..';
-import { Entity, SchemaMapping } from './database';
 import Products from './products';
 
 const priceColumns: SchemaMapping<Price> = {

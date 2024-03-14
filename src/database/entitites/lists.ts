@@ -1,6 +1,6 @@
 import { List } from '../../models';
+import { Entity, SchemaMapping } from '../../models/database';
 import knex from '..';
-import { Entity, SchemaMapping } from './database';
 import Users from './users';
 
 const listColumns: SchemaMapping<List> = {

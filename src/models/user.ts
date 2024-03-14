@@ -1,4 +1,4 @@
-import { DatabaseTable } from '../database/entitites/database';
+import { DatabaseTable } from './database';
 
 export interface User extends DatabaseTable {
   first_name: string;

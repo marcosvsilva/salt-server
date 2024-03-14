@@ -3,7 +3,7 @@ import { JsonArray, JsonObject, JsonValue } from 'type-fest';
 import uuidv6 from 'uuid-with-v6';
 
 import knex from '../database';
-import { DatabaseTable, Entity } from '../database/entitites/database';
+import { DatabaseTable, Entity } from '../models/database';
 
 export function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
   return `${entity.tableName.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;

@@ -2,7 +2,6 @@ import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
-import { DatabaseTable, Entity } from '../database/entitites/database';
 import {
   InvalidUUIDException,
   MissingParamsException,
@@ -17,6 +16,7 @@ import {
   isEmpty,
   isValidUUID,
 } from '../helpers';
+import { DatabaseTable, Entity } from '../models/database';
 
 export interface Where {
   field: string;
