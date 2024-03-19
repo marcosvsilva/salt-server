@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-import { formatReferenceFieldUUId } from '../../helpers';
+import { formatReferenceFieldUUId } from '../../helpers/common.helper';
 import Lists from '../entitites/lists';
 import Users from '../entitites/users';
 
