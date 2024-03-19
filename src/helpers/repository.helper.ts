@@ -4,11 +4,7 @@ import uuidv6 from 'uuid-with-v6';
 
 import knex from '../database';
 import { DatabaseTable, Entity } from '../models/database';
-import isEmpty from './common.helper';
-
-function formatReferenceFieldUUId(entity: Entity<DatabaseTable>): string {
-  return `${entity.tableName.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
-}
+import { formatReferenceFieldUUId, isEmpty } from './common.helper';
 
 function cast(entry: DatabaseTable, entity: Entity<DatabaseTable>): DatabaseTable {
   return Object.keys(entry).reduce((_obj, key) => {
