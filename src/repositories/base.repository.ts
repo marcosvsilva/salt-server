@@ -7,19 +7,25 @@ import {
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
-import { addIdentifiers, addTimestamps, deserialize, filterParams, isValidUUID } from '../helpers';
-import referenceFieldsIsValid from '../helpers/repository.helper';
+import {
+  addIdentifiers,
+  addTimestamps,
+  deserialize,
+  isValidReferenceFields,
+  isValidUUID,
+  processParams,
+} from '../helpers/repository.helper';
 import { DatabaseTable, Entity } from '../models/database';
-import { Where } from './interface.repository';
+import { InterfaceRepository, Where } from './interface.repository';
 
-export class BaseRepository implements BaseRepository {
+export class BaseRepository implements InterfaceRepository {
   private entity: Entity<DatabaseTable>;
 
   constructor(entity: Entity<DatabaseTable>) {
     this.entity = entity;
   }
 
-  async getByID(idValue: string): Promise<DatabaseTable> {
+  getByID = async (idValue: string): Promise<DatabaseTable> => {
     if (!isValidUUID(idValue)) {
       throw new InvalidUUIDException();
     }
@@ -44,9 +50,9 @@ export class BaseRepository implements BaseRepository {
         console.log(error);
         throw error;
       });
-  }
+  };
 
-  async getAll(where?: Where[]): Promise<DatabaseTable[]> {
+  getAll = async (where?: Where[]): Promise<DatabaseTable[]> => {
     let query = knex.select(this.entity.selectColumsRef).from(this.entity.tableName);
 
     if (where && where?.length > 0) {
@@ -66,20 +72,20 @@ export class BaseRepository implements BaseRepository {
       .catch((error: Error) => {
         throw error;
       });
-  }
+  };
 
-  async create(
+  create = async (
     params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-  ): Promise<DatabaseTable> {
+  ): Promise<DatabaseTable> => {
     if (!params) {
       throw new MissingParamsException();
     }
 
-    let newParams = filterParams(params, this.entity);
+    let newParams = processParams(params, this.entity);
     newParams = addTimestamps(newParams, this.entity, 'create');
     newParams = addIdentifiers(newParams, this.entity);
 
-    const checkReferences = referenceFieldsIsValid(this.entity, params);
+    const checkReferences = isValidReferenceFields(this.entity, params);
     if (!checkReferences) {
       throw new MissingReferencesFieldsException();
     }
@@ -110,12 +116,12 @@ export class BaseRepository implements BaseRepository {
       .catch((error: Error) => {
         throw error;
       });
-  }
+  };
 
-  async update(
+  update = async (
     params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
     uuid: string
-  ): Promise<DatabaseTable> {
+  ): Promise<DatabaseTable> => {
     if (!isValidUUID(uuid)) {
       throw new InvalidUUIDException();
     }
@@ -124,7 +130,7 @@ export class BaseRepository implements BaseRepository {
       throw new MissingParamsException();
     }
 
-    let newParams = filterParams(params, this.entity);
+    let newParams = processParams(params, this.entity);
     newParams = addTimestamps(params, this.entity);
 
     return knex
@@ -152,9 +158,9 @@ export class BaseRepository implements BaseRepository {
       .catch((error: Error) => {
         throw error;
       });
-  }
+  };
 
-  async remove(uuid: string): Promise<boolean> {
+  delete = async (uuid: string): Promise<boolean> => {
     if (!isValidUUID(uuid)) {
       throw new InvalidUUIDException();
     }
@@ -169,7 +175,7 @@ export class BaseRepository implements BaseRepository {
       .catch((error: Error) => {
         throw error;
       });
-  }
+  };
 }
 
 export default BaseRepository;
