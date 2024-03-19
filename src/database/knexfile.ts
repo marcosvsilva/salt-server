@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 
 const options = {
   development: {
-    client: 'pg',
+    client: process.env.DB_CLIENT,
     connection: {
       host: process.env.DB_HOST || '',
       user: process.env.DB_USER || '',
@@ -20,7 +20,7 @@ const options = {
   } as Knex.Config,
 
   production: {
-    client: 'pg',
+    client: process.env.DB_CLIENT,
     acquireConnectionTimeout: 60000 * 3,
     connection: {
       host: process.env.DB_HOST || '',
