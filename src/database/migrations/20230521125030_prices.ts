@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-import { formatReferenceFieldUUId } from '../../helpers/adapter.helper';
+import { formatReferenceFieldUUId } from '../../helpers';
 import Prices from '../entitites/prices';
 import Products from '../entitites/products';
 
