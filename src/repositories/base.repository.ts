@@ -11,10 +11,10 @@ import {
   addIdentifiers,
   addTimestamps,
   deserialize,
+  formatParams,
   isValidReferenceFields,
   isValidUUID,
-  processParams,
-} from '../helpers/repository.helper';
+} from '../helpers';
 import { DatabaseTable, Entity } from '../models/database';
 import { InterfaceRepository, Where } from './interface.repository';
 
@@ -81,7 +81,7 @@ export class BaseRepository implements InterfaceRepository {
       throw new MissingParamsException();
     }
 
-    let newParams = processParams(params, this.entity);
+    let newParams = formatParams(params, this.entity);
     newParams = addTimestamps(newParams, this.entity, 'create');
     newParams = addIdentifiers(newParams, this.entity);
 
@@ -130,7 +130,7 @@ export class BaseRepository implements InterfaceRepository {
       throw new MissingParamsException();
     }
 
-    let newParams = processParams(params, this.entity);
+    let newParams = formatParams(params, this.entity);
     newParams = addTimestamps(params, this.entity);
 
     return knex
