@@ -1,13 +1,11 @@
-import { Response } from 'express';
-import { Knex } from 'knex';
-import { JsonObject, JsonValue } from 'type-fest';
+import { Request, Response } from 'express';
 
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
-import { isEmpty } from '../helpers/common.helper';
+import { getParam, getUUID, isEmpty, isValidUUID } from '../helpers';
 import { DatabaseTable, Entity } from '../models/database';
 import { BaseRepository } from '../repositories/base.repository';
 import { InterfaceRepository } from '../repositories/interface.repository';
@@ -24,9 +22,9 @@ export class ApplicationController implements InterfaceController {
   }
 
   /**
-   * Index
+   * index
    */
-  index = async (res: Response): Promise<Response> => {
+  index = async (req: Request, res: Response): Promise<Response> => {
     try {
       const entries = await this.repository.getAll();
       if (entries) {
@@ -43,11 +41,16 @@ export class ApplicationController implements InterfaceController {
   };
 
   /**
-   * Show
-   *
+   * show
    */
-  show = async (res: Response, uuid: string): Promise<Response> => {
+  show = async (req: Request, res: Response): Promise<Response> => {
     try {
+      const uuid = getUUID(req);
+
+      if (!isValidUUID(uuid)) {
+        throw new InvalidUUIDException();
+      }
+
       const entry = await this.repository.getByID(uuid);
       if (!isEmpty(entry)) {
         return res.status(200).json(entry).end();
@@ -63,13 +66,11 @@ export class ApplicationController implements InterfaceController {
   };
 
   /**
-   * Create
-   *
+   * create
    */
-  create = async (
-    res: Response,
-    params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-  ): Promise<Response> => {
+  create = async (req: Request, res: Response): Promise<Response> => {
+    const params = getParam(req);
+
     try {
       const data = await this.repository.create(params);
       if (!isEmpty(data)) {
@@ -89,14 +90,12 @@ export class ApplicationController implements InterfaceController {
   };
 
   /**
-   * Update
-   *
+   * update
    */
-  update = async (
-    res: Response,
-    uuid: string,
-    params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-  ): Promise<Response> => {
+  update = async (req: Request, res: Response): Promise<Response> => {
+    const uuid = getUUID(req);
+    const params = getParam(req);
+
     try {
       const data = await this.repository.update(params, uuid);
       if (!isEmpty(data)) {
@@ -113,10 +112,11 @@ export class ApplicationController implements InterfaceController {
   };
 
   /**
-   * Delete
-   *
+   * delete
    */
-  delete = async (res: Response, uuid: string): Promise<Response> => {
+  delete = async (req: Request, res: Response): Promise<Response> => {
+    const uuid = getUUID(req);
+
     try {
       const removed = await this.repository.delete(uuid);
       if (!isEmpty(removed)) {
