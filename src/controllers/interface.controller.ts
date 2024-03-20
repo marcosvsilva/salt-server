@@ -1,24 +1,30 @@
 import { Request, Response } from 'express';
-import { Knex } from 'knex';
-import { JsonObject, JsonValue } from 'type-fest';
 
 export interface InterfaceController {
-  index(req: Request): Promise<Response>;
+  /**
+   * index
+   */
+  index(req: Request, res: Response): Promise<Response>;
 
-  show(res: Response, uuid: string): Promise<Response>;
+  /**
+   * show
+   */
+  show(req: Request, res: Response): Promise<Response>;
 
-  create(
-    res: Response,
-    params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-  ): Promise<Response>;
+  /**
+   * create
+   */
+  create(req: Request, res: Response): Promise<Response>;
 
-  update(
-    res: Response,
-    uuid: string,
-    params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-  ): Promise<Response>;
+  /**
+   * update
+   */
+  update(req: Request, res: Response): Promise<Response>;
 
-  delete(res: Response, uuid: string): Promise<Response>;
+  /**
+   * delete
+   */
+  delete(req: Request, res: Response): Promise<Response>;
 }
 
 export default InterfaceController;
