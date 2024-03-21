@@ -1,5 +1,6 @@
-export { List } from './list';
-export { ListProduct } from './list_product';
+export { Category } from './category';
+export { Item } from './item';
+export { Order } from './order';
+export { Payment } from './payment';
 export { Price } from './price';
-export { Product } from './product';
 export { User } from './user';
