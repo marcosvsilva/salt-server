@@ -1,8 +1,9 @@
 import { DatabaseTable } from './database';
 
 export interface Price extends DatabaseTable {
-  date: Date;
   price: number;
+  dateStart: Date;
+  dateEnd: Date;
 
   // database
   id: number;
