@@ -12,6 +12,8 @@ const userColumns: SchemaMapping<User> = {
   birthday: 'birthday',
   email: 'email',
   contact: 'contact',
+  status: 'status',
+  type: 'type',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
@@ -26,6 +28,8 @@ const userMaping: SchemaMapping<User> = {
   birthday: 'birthday',
   email: 'email',
   contact: 'contact',
+  status: 'status',
+  type: 'type',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
@@ -42,6 +46,8 @@ export const selectColumnsUsers = [
   knex.ref(userMaping.birthday).as(userColumns.birthday).withSchema(tabName),
   knex.ref(userMaping.email).as(userColumns.email).withSchema(tabName),
   knex.ref(userMaping.contact).as(userColumns.contact).withSchema(tabName),
+  knex.ref(userMaping.status).as(userColumns.status).withSchema(tabName),
+  knex.ref(userMaping.type).as(userColumns.type).withSchema(tabName),
   knex.ref(userMaping.createdAt).as(userColumns.createdAt).withSchema(tabName),
   knex.ref(userMaping.updatedAt).as(userColumns.updatedAt).withSchema(tabName),
 ];
@@ -56,10 +62,11 @@ const Users: Entity<User> = {
     userColumns.first_name,
     userColumns.last_name,
     userColumns.user_name,
-    userColumns.password,
     userColumns.birthday,
     userColumns.email,
     userColumns.contact,
+    userColumns.status,
+    userColumns.type,
   ],
 };
 
