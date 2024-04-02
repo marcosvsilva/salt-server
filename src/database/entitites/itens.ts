@@ -40,7 +40,6 @@ const Itens: Entity<Item> = {
   column: itemColumns,
   mapping: itemMapping,
   selectColumsRef: selectColumnsListProducts,
-  reference: [Prices],
   allowed: [itemColumns.brand, itemColumns.status],
 };
 
