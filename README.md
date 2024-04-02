@@ -1,7 +1,6 @@
 # Salt Software - Backend
 
-Welcome to Salt Software, the platform for managing shopping lists intelligently.
-Our platform offers features including list creation, price tracking, historical shopping comparisons, and even intelligent suggestions for cost-effective shopping destinations.
+Welcome to Salt Software, the bar and pub ordering platform. This platform aims to connect customers with bars and pubs in an intelligent and interactive manner, enabling customers to place orders directly with the establishment and receive them at the table without the need for human interaction.
 
 This repository is responsible for the backend project.
 
