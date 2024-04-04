@@ -1,3 +1,4 @@
+import { Category } from './category';
 import { DatabaseTable } from './database';
 import { Price } from './price';
 
@@ -21,6 +22,7 @@ export interface Item extends DatabaseTable {
 
   // references
   prices?: Price[];
+  category?: Category;
 }
 
 export default Item;
