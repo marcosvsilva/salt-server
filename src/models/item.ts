@@ -15,9 +15,9 @@ export interface Item extends InterfaceModel {
   updatedAt: Date;
 
   // references
-  brind?: Brand;
-  prices?: Price[];
+  brand?: Brand;
   category?: Category;
+  prices?: Price[];
 }
 
 export default Item;
