@@ -1,26 +1,21 @@
+import { Brand } from './brand';
 import { Category } from './category';
-import { DatabaseTable } from './database';
+import { InterfaceModel } from './model';
 import { Price } from './price';
+import { Status } from './types';
 
-export enum StatusItem {
-  Active = 0,
-  SoldOut = 1,
-  Sale = 2,
-  Inactive = 3,
-}
-
-export interface Item extends DatabaseTable {
+export interface Item extends InterfaceModel {
   description: string;
-  brand: string;
-  status: StatusItem;
+  status: Status;
 
-  // database
+  // base
   id: number;
   uuid: string;
   createdAt: Date;
   updatedAt: Date;
 
   // references
+  brind?: Brand;
   prices?: Price[];
   category?: Category;
 }
