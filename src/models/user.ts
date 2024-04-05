@@ -1,19 +1,15 @@
-import { DatabaseTable } from './database';
-
-export enum StatusUser {
-  Active = 0,
-  Inactive = 1,
-  Removed = 2,
-}
+import { InterfaceModel } from './model';
+import { Status } from './types';
 
 export enum TypeUser {
-  User = 0,
-  Staff = 1,
-  Supervisor = 2,
-  Manager = 3,
+  Visitor = 0,
+  User = 1,
+  Staff = 2,
+  Supervisor = 3,
+  Manager = 4,
 }
 
-export interface User extends DatabaseTable {
+export interface User extends InterfaceModel {
   first_name: string;
   last_name: string;
   user_name: string;
@@ -21,14 +17,17 @@ export interface User extends DatabaseTable {
   birthday: Date;
   email: string;
   contact: string;
-  status: StatusUser;
+  status: Status;
   type: TypeUser;
 
-  // database
+  // base
   id: number;
   uuid: string;
   createdAt: Date;
   updatedAt: Date;
+
+  // references
+  super?: User;
 }
 
 export default User;
