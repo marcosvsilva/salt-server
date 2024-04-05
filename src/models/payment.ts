@@ -7,9 +7,14 @@ export enum StatusPayment {
   Refused = 3,
 }
 
+export enum MethodsPayment {
+  Cash = 0,
+  Card = 1,
+}
+
 export interface Payment extends InterfaceModel {
   value: number;
-  method: string;
+  method: MethodsPayment;
   status: StatusPayment;
 
   // base
