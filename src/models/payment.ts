@@ -1,18 +1,18 @@
-import { DatabaseTable } from './database';
+import { InterfaceModel } from './model';
 
 export enum StatusPayment {
   Created = 0,
-  Waiting = 1,
+  Processing = 1,
   Processed = 2,
   Refused = 3,
 }
 
-export interface Payment extends DatabaseTable {
+export interface Payment extends InterfaceModel {
   value: number;
   method: string;
   status: StatusPayment;
 
-  // database
+  // base
   id: number;
   uuid: string;
   createdAt: Date;
