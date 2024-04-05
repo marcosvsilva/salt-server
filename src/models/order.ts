@@ -1,26 +1,33 @@
-import { DatabaseTable } from './database';
 import { Item } from './item';
+import { InterfaceModel } from './model';
 import { Payment } from './payment';
 import { User } from './user';
 
 export enum StatusOrder {
   Created = 0,
-  WaitingDelivery = 1,
-  Finished = 2,
-  Canceled = 3,
+  Paid = 1,
+  Processing = 2,
+  OnWay = 3,
+  Received = 4,
+  Finished = 5,
+  Canceled = 6,
+  Deleted = 7,
 }
 
 export enum TypeOrder {
   OnSite = 0,
-  Delivery = 1,
+  Table = 1,
+  Delivery = 2,
 }
 
-export interface Order extends DatabaseTable {
-  notes: string;
-  status: StatusOrder;
+export interface Order extends InterfaceModel {
   type: TypeOrder;
+  discount: number;
+  totalPrice: number;
+  status: StatusOrder;
+  notes: string;
 
-  // database
+  // base
   id: number;
   uuid: string;
   createdAt: Date;
