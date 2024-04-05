@@ -1,11 +1,11 @@
-import { DatabaseTable } from './database';
+import { InterfaceModel } from './model';
 
-export interface Price extends DatabaseTable {
+export interface Price extends InterfaceModel {
   price: number;
   dateStart: Date;
   dateEnd: Date;
 
-  // database
+  // base
   id: number;
   uuid: string;
   createdAt: Date;
