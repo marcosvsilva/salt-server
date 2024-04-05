@@ -1,14 +1,10 @@
-import { DatabaseTable } from './database';
+import { InterfaceModel } from './model';
+import { Status } from './types';
 
-export enum StatusItem {
-  Active = 0,
-  Inactive = 1,
-}
-
-export interface Category extends DatabaseTable {
+export interface Category extends InterfaceModel {
   name: string;
   description: string;
-  status: StatusItem;
+  status: Status;
 
   // database
   id: number;
