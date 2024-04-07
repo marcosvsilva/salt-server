@@ -1,7 +1,7 @@
 import { Payment } from '../../models';
-import { Entity, SchemaMapping } from '../../models/database';
 import knex from '..';
-import Prices from './prices';
+import { Entity, ForeignKey, SchemaMapping } from './entity';
+import Orders from './orders';
 
 const paymentColumns: SchemaMapping<Payment> = {
   id: 'id',
@@ -23,15 +23,15 @@ const paymentMapping: SchemaMapping<Payment> = {
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Payment';
+const schemaName = 'Salt';
 const tabName = 'Payments';
 
 const selectColumnsListProducts = [
-  knex.ref(paymentMapping.value).as(paymentColumns.value).withSchema(tabName),
-  knex.ref(paymentMapping.method).as(paymentColumns.method).withSchema(tabName),
-  knex.ref(paymentMapping.status).as(paymentColumns.status).withSchema(tabName),
-  knex.ref(paymentMapping.createdAt).as(paymentColumns.createdAt).withSchema(tabName),
-  knex.ref(paymentMapping.updatedAt).as(paymentColumns.updatedAt).withSchema(tabName),
+  knex.ref(paymentColumns.value).as(paymentMapping.value).withSchema(tabName),
+  knex.ref(paymentColumns.method).as(paymentMapping.method).withSchema(tabName),
+  knex.ref(paymentColumns.status).as(paymentMapping.status).withSchema(tabName),
+  knex.ref(paymentColumns.createdAt).as(paymentMapping.createdAt).withSchema(tabName),
+  knex.ref(paymentColumns.updatedAt).as(paymentMapping.updatedAt).withSchema(tabName),
 ];
 
 const Payments: Entity<Payment> = {
@@ -40,7 +40,17 @@ const Payments: Entity<Payment> = {
   column: paymentColumns,
   mapping: paymentMapping,
   selectColumsRef: selectColumnsListProducts,
-  allowed: [paymentColumns.method, paymentColumns.status],
+  allowed: [paymentMapping.method, paymentMapping.status],
 };
+
+const paymentForeignKeys: ForeignKey[] = [
+  {
+    uuid: 'order',
+    references: Orders.column.uuid,
+    table: Orders.tableName,
+  },
+];
+
+Payments.foreignKeys = paymentForeignKeys;
 
 export default Payments;
