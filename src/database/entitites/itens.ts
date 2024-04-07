@@ -1,13 +1,13 @@
 import { Item } from '../../models';
-import { Entity, SchemaMapping } from '../../models/database';
 import knex from '..';
-import Prices from './prices';
+import Brands from './brands';
+import Categories from './categories';
+import { Entity, ForeignKey, SchemaMapping } from './entity';
 
 const itemColumns: SchemaMapping<Item> = {
   id: 'id',
   uuid: 'uuid',
   description: 'status',
-  brand: 'brand',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -17,21 +17,21 @@ const itemMapping: SchemaMapping<Item> = {
   id: 'id',
   uuid: 'uuid',
   description: 'description',
-  brand: 'brand',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Item';
+const schemaName = 'Salt';
 const tabName = 'Itens';
 
 const selectColumnsListProducts = [
-  knex.ref(itemMapping.description).as(itemColumns.description).withSchema(tabName),
-  knex.ref(itemMapping.brand).as(itemColumns.brand).withSchema(tabName),
-  knex.ref(itemMapping.status).as(itemColumns.status).withSchema(tabName),
-  knex.ref(itemMapping.createdAt).as(itemColumns.createdAt).withSchema(tabName),
-  knex.ref(itemMapping.updatedAt).as(itemColumns.updatedAt).withSchema(tabName),
+  knex.ref(itemColumns.id).as(itemMapping.id).withSchema(tabName),
+  knex.ref(itemColumns.uuid).as(itemMapping.uuid).withSchema(tabName),
+  knex.ref(itemColumns.description).as(itemMapping.description).withSchema(tabName),
+  knex.ref(itemColumns.status).as(itemMapping.status).withSchema(tabName),
+  knex.ref(itemColumns.createdAt).as(itemMapping.createdAt).withSchema(tabName),
+  knex.ref(itemColumns.updatedAt).as(itemMapping.updatedAt).withSchema(tabName),
 ];
 
 const Itens: Entity<Item> = {
@@ -40,7 +40,22 @@ const Itens: Entity<Item> = {
   column: itemColumns,
   mapping: itemMapping,
   selectColumsRef: selectColumnsListProducts,
-  allowed: [itemColumns.brand, itemColumns.status],
+  allowed: [itemMapping.status],
 };
+
+const itemForeignKeys: ForeignKey[] = [
+  {
+    uuid: 'brand',
+    references: Brands.column.uuid,
+    table: Brands.tableName,
+  },
+  {
+    uuid: 'category',
+    references: Categories.column.uuid,
+    table: Categories.tableName,
+  },
+];
+
+Itens.foreignKeys = itemForeignKeys;
 
 export default Itens;
