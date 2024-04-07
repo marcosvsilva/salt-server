@@ -1,16 +1,16 @@
 import { Order } from '../../models';
-import { Entity, SchemaMapping } from '../../models/database';
 import knex from '..';
-import Itens from './itens';
-import Payments from './payments';
+import { Entity, ForeignKey, SchemaMapping } from './entity';
 import Users from './users';
 
 const orderColumns: SchemaMapping<Order> = {
   id: 'id',
   uuid: 'uuid',
-  notes: 'notes',
-  status: 'status',
+  discount: 'discount',
+  totalPrice: 'totalPrice',
   type: 'type',
+  status: 'status',
+  notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
@@ -18,22 +18,28 @@ const orderColumns: SchemaMapping<Order> = {
 const orderMapping: SchemaMapping<Order> = {
   id: 'id',
   uuid: 'uuid',
-  notes: 'notes',
-  status: 'status',
+  discount: 'discount',
+  totalPrice: 'totalPrice',
   type: 'type',
+  status: 'status',
+  notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Order';
+const schemaName = 'Salt';
 const tabName = 'Orders';
 
 const selectColumnsListProducts = [
-  knex.ref(orderMapping.notes).as(orderColumns.notes).withSchema(tabName),
-  knex.ref(orderMapping.status).as(orderColumns.status).withSchema(tabName),
-  knex.ref(orderMapping.type).as(orderColumns.type).withSchema(tabName),
-  knex.ref(orderMapping.createdAt).as(orderColumns.createdAt).withSchema(tabName),
-  knex.ref(orderMapping.updatedAt).as(orderColumns.updatedAt).withSchema(tabName),
+  knex.ref(orderColumns.id).as(orderMapping.id).withSchema(tabName),
+  knex.ref(orderColumns.uuid).as(orderMapping.uuid).withSchema(tabName),
+  knex.ref(orderColumns.discount).as(orderMapping.discount).withSchema(tabName),
+  knex.ref(orderColumns.totalPrice).as(orderMapping.totalPrice).withSchema(tabName),
+  knex.ref(orderColumns.type).as(orderMapping.type).withSchema(tabName),
+  knex.ref(orderColumns.status).as(orderMapping.status).withSchema(tabName),
+  knex.ref(orderColumns.notes).as(orderMapping.notes).withSchema(tabName),
+  knex.ref(orderColumns.createdAt).as(orderMapping.createdAt).withSchema(tabName),
+  knex.ref(orderColumns.updatedAt).as(orderMapping.updatedAt).withSchema(tabName),
 ];
 
 const Orders: Entity<Order> = {
@@ -42,8 +48,17 @@ const Orders: Entity<Order> = {
   column: orderColumns,
   mapping: orderMapping,
   selectColumsRef: selectColumnsListProducts,
-  reference: [Users, Itens, Payments],
-  allowed: [orderColumns.status, orderColumns.type],
+  allowed: [orderMapping.status, orderMapping.type],
 };
+
+const orderForeignKeys: ForeignKey[] = [
+  {
+    uuid: 'user',
+    references: Users.column.uuid,
+    table: Users.tableName,
+  },
+];
+
+Orders.foreignKeys = orderForeignKeys;
 
 export default Orders;
