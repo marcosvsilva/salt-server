@@ -1,6 +1,6 @@
 import { User } from '../../models';
-import { Entity, SchemaMapping } from '../../models/database';
 import knex from '..';
+import { Entity, ForeignKey, SchemaMapping } from './entity';
 
 const userColumns: SchemaMapping<User> = {
   id: 'id',
@@ -12,8 +12,8 @@ const userColumns: SchemaMapping<User> = {
   birthday: 'birthday',
   email: 'email',
   contact: 'contact',
-  status: 'status',
   type: 'type',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
@@ -28,28 +28,29 @@ const userMaping: SchemaMapping<User> = {
   birthday: 'birthday',
   email: 'email',
   contact: 'contact',
-  status: 'status',
   type: 'type',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'User';
+const schemaName = 'Salt';
 const tabName = 'Users';
 
 export const selectColumnsUsers = [
-  knex.ref(userMaping.uuid).as(userColumns.uuid).withSchema(tabName),
-  knex.ref(userMaping.first_name).as(userColumns.first_name).withSchema(tabName),
-  knex.ref(userMaping.last_name).as(userColumns.last_name).withSchema(tabName),
-  knex.ref(userMaping.user_name).as(userColumns.user_name).withSchema(tabName),
-  knex.ref(userMaping.password).as(userColumns.password).withSchema(tabName),
-  knex.ref(userMaping.birthday).as(userColumns.birthday).withSchema(tabName),
-  knex.ref(userMaping.email).as(userColumns.email).withSchema(tabName),
-  knex.ref(userMaping.contact).as(userColumns.contact).withSchema(tabName),
-  knex.ref(userMaping.status).as(userColumns.status).withSchema(tabName),
-  knex.ref(userMaping.type).as(userColumns.type).withSchema(tabName),
-  knex.ref(userMaping.createdAt).as(userColumns.createdAt).withSchema(tabName),
-  knex.ref(userMaping.updatedAt).as(userColumns.updatedAt).withSchema(tabName),
+  knex.ref(userColumns.id).as(userMaping.id).withSchema(tabName),
+  knex.ref(userColumns.uuid).as(userMaping.uuid).withSchema(tabName),
+  knex.ref(userColumns.first_name).as(userMaping.first_name).withSchema(tabName),
+  knex.ref(userColumns.last_name).as(userMaping.last_name).withSchema(tabName),
+  knex.ref(userColumns.user_name).as(userMaping.user_name).withSchema(tabName),
+  knex.ref(userColumns.password).as(userMaping.password).withSchema(tabName),
+  knex.ref(userColumns.birthday).as(userMaping.birthday).withSchema(tabName),
+  knex.ref(userColumns.email).as(userMaping.email).withSchema(tabName),
+  knex.ref(userColumns.contact).as(userMaping.contact).withSchema(tabName),
+  knex.ref(userColumns.type).as(userMaping.type).withSchema(tabName),
+  knex.ref(userColumns.status).as(userMaping.status).withSchema(tabName),
+  knex.ref(userColumns.createdAt).as(userMaping.createdAt).withSchema(tabName),
+  knex.ref(userColumns.updatedAt).as(userMaping.updatedAt).withSchema(tabName),
 ];
 
 const Users: Entity<User> = {
@@ -59,15 +60,25 @@ const Users: Entity<User> = {
   mapping: userMaping,
   selectColumsRef: selectColumnsUsers,
   allowed: [
-    userColumns.first_name,
-    userColumns.last_name,
-    userColumns.user_name,
-    userColumns.birthday,
-    userColumns.email,
-    userColumns.contact,
-    userColumns.status,
-    userColumns.type,
+    userMaping.first_name,
+    userMaping.last_name,
+    userMaping.user_name,
+    userMaping.birthday,
+    userMaping.email,
+    userMaping.contact,
+    userMaping.status,
+    userMaping.type,
   ],
 };
+
+const userForeignKeys: ForeignKey[] = [
+  {
+    uuid: 'supervisor',
+    references: Users.column.uuid,
+    table: Users.tableName,
+  },
+];
+
+Users.foreignKeys = userForeignKeys;
 
 export default Users;
