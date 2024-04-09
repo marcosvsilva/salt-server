@@ -3,7 +3,7 @@ import { JsonObject, JsonValue } from 'type-fest';
 import uuidv6 from 'uuid-with-v6';
 
 import knex from '../database';
-import { DatabaseTable, Entity } from '../models/database';
+import { DatabaseTable, Entity } from '../database/entitites/entity';
 
 export const cast = (entry: DatabaseTable, entity: Entity<DatabaseTable>): DatabaseTable => {
   return Object.keys(entry).reduce((_obj, key) => {
