@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
-import { DatabaseTable, Entity } from '../models/database';
+import { DatabaseTable, Entity } from '../database/entitites/entity';
 
 export const formatReferenceFieldUUId = (entity: Entity<DatabaseTable>): string => {
   return `${entity.tableName.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
