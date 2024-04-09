@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
-import { DatabaseTable } from '../models/database';
+import { InterfaceModel } from '../models';
 
 export interface Where {
   field: string;
@@ -10,18 +10,18 @@ export interface Where {
 }
 
 export interface InterfaceRepository {
-  getByID(idValue: string): Promise<DatabaseTable>;
+  getByID(idValue: string): Promise<InterfaceModel>;
 
-  getAll(where?: Where[]): Promise<DatabaseTable[]>;
+  getAll(where?: Where[]): Promise<InterfaceModel[]>;
 
   create(
     params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-  ): Promise<DatabaseTable>;
+  ): Promise<InterfaceModel>;
 
   update(
     params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
     uuid: string
-  ): Promise<DatabaseTable>;
+  ): Promise<InterfaceModel>;
 
   delete(uuid: string): Promise<boolean>;
 }
