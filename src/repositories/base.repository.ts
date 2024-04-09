@@ -2,6 +2,7 @@ import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
+import { Entity } from '../database/entitites/entity';
 import {
   InvalidUUIDException,
   MissingParamsException,
@@ -15,17 +16,17 @@ import {
   isValidReferenceFields,
   isValidUUID,
 } from '../helpers';
-import { DatabaseTable, Entity } from '../models/database';
+import { InterfaceModel } from '../models';
 import { InterfaceRepository, Where } from './interface.repository';
 
 export class BaseRepository implements InterfaceRepository {
-  private entity: Entity<DatabaseTable>;
+  private entity: Entity<InterfaceModel>;
 
-  constructor(entity: Entity<DatabaseTable>) {
+  constructor(entity: Entity<InterfaceModel>) {
     this.entity = entity;
   }
 
-  getByID = async (idValue: string): Promise<DatabaseTable> => {
+  getByID = async (idValue: string): Promise<InterfaceModel> => {
     if (!isValidUUID(idValue)) {
       throw new InvalidUUIDException();
     }
@@ -44,7 +45,7 @@ export class BaseRepository implements InterfaceRepository {
           }
           return files;
         }
-        return {} as DatabaseTable;
+        return {} as InterfaceModel;
       })
       .catch((error: Error) => {
         console.log(error);
@@ -52,7 +53,7 @@ export class BaseRepository implements InterfaceRepository {
       });
   };
 
-  getAll = async (where?: Where[]): Promise<DatabaseTable[]> => {
+  getAll = async (where?: Where[]): Promise<InterfaceModel[]> => {
     let query = knex.select(this.entity.selectColumsRef).from(this.entity.tableName);
 
     if (where && where?.length > 0) {
@@ -67,7 +68,7 @@ export class BaseRepository implements InterfaceRepository {
         if (Array.isArray(files)) {
           return files;
         }
-        return [files] as DatabaseTable[];
+        return [files] as InterfaceModel[];
       })
       .catch((error: Error) => {
         throw error;
@@ -76,7 +77,7 @@ export class BaseRepository implements InterfaceRepository {
 
   create = async (
     params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-  ): Promise<DatabaseTable> => {
+  ): Promise<InterfaceModel> => {
     if (!params) {
       throw new MissingParamsException();
     }
@@ -121,7 +122,7 @@ export class BaseRepository implements InterfaceRepository {
   update = async (
     params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
     uuid: string
-  ): Promise<DatabaseTable> => {
+  ): Promise<InterfaceModel> => {
     if (!isValidUUID(uuid)) {
       throw new InvalidUUIDException();
     }
