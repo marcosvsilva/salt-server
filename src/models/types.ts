@@ -3,3 +3,5 @@ export enum Status {
   Inactive = 1,
   Removed = 2,
 }
+
+export default Status;
