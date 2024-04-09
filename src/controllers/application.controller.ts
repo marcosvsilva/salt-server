@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 
+import { DatabaseTable, Entity } from '../database/entitites/entity';
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
 import { getParam, getUUID, isEmpty, isValidUUID } from '../helpers';
-import { DatabaseTable, Entity } from '../models/database';
 import { BaseRepository } from '../repositories/base.repository';
 import { InterfaceRepository } from '../repositories/interface.repository';
 import { InterfaceController } from './interface.controller';
