@@ -45,12 +45,12 @@ const Itens: Entity<Item> = {
 
 const itemForeignKeys: ForeignKey[] = [
   {
-    uuid: 'brand',
+    attribute: 'brand',
     references: Brands.column.uuid,
     table: Brands.tableName,
   },
   {
-    uuid: 'category',
+    attribute: 'category',
     references: Categories.column.uuid,
     table: Categories.tableName,
   },
