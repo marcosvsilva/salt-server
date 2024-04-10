@@ -39,12 +39,12 @@ const OrderItens: Entity<InterfaceModel> = {
 
 const categoryForeignKeys: ForeignKey[] = [
   {
-    uuid: 'order',
+    attribute: 'order',
     references: Orders.column.uuid,
     table: Orders.tableName,
   },
   {
-    uuid: 'itens',
+    attribute: 'itens',
     references: Itens.column.uuid,
     table: Itens.tableName,
   },
