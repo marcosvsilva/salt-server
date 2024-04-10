@@ -12,7 +12,7 @@ export type Ref = Knex.Ref<
 >[];
 
 export type ForeignKey = {
-  uuid: string;
+  attribute: string;
   references: string;
   table: string;
 };
