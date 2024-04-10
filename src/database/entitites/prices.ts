@@ -46,7 +46,7 @@ const Prices: Entity<Price> = {
 
 const priceForeignKeys: ForeignKey[] = [
   {
-    uuid: 'item',
+    attribute: 'item',
     references: Itens.column.uuid,
     table: Itens.tableName,
   },
