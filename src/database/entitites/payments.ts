@@ -45,7 +45,7 @@ const Payments: Entity<Payment> = {
 
 const paymentForeignKeys: ForeignKey[] = [
   {
-    uuid: 'order',
+    attribute: 'order',
     references: Orders.column.uuid,
     table: Orders.tableName,
   },
