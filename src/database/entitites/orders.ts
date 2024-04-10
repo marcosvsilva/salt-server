@@ -53,7 +53,7 @@ const Orders: Entity<Order> = {
 
 const orderForeignKeys: ForeignKey[] = [
   {
-    uuid: 'user',
+    attribute: 'user',
     references: Users.column.uuid,
     table: Users.tableName,
   },
