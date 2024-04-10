@@ -46,7 +46,7 @@ const Categories: Entity<Category> = {
 
 const categoryForeignKeys: ForeignKey[] = [
   {
-    uuid: 'father',
+    attribute: 'father',
     references: Categories.column.uuid,
     table: Categories.tableName,
   },
