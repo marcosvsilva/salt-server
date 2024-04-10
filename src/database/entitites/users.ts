@@ -73,7 +73,7 @@ const Users: Entity<User> = {
 
 const userForeignKeys: ForeignKey[] = [
   {
-    uuid: 'supervisor',
+    attribute: 'supervisor',
     references: Users.column.uuid,
     table: Users.tableName,
   },
