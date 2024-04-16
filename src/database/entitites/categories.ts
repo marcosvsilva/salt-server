@@ -35,7 +35,7 @@ const selectColumnsListProducts = [
   knex.ref(categoryColumns.updatedAt).as(categoryMapping.updatedAt).withSchema(tabName),
 ];
 
-const Categories: Entity<Category> = {
+export const Categories: Entity<Category> = {
   name: schemaName,
   tableName: tabName,
   column: categoryColumns,
