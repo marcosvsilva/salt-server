@@ -1,7 +1,7 @@
 import { Item } from '../../models';
 import knex from '..';
-import Brands from './brands';
-import Categories from './categories';
+import { Brands } from './brands';
+import { Categories } from './categories';
 import { Entity, ForeignKey, SchemaMapping } from './entity';
 
 const itemColumns: SchemaMapping<Item> = {
@@ -34,7 +34,7 @@ const selectColumnsListProducts = [
   knex.ref(itemColumns.updatedAt).as(itemMapping.updatedAt).withSchema(tabName),
 ];
 
-const Itens: Entity<Item> = {
+export const Itens: Entity<Item> = {
   name: schemaName,
   tableName: tabName,
   column: itemColumns,
