@@ -1,7 +1,7 @@
 import { Order } from '../../models';
 import knex from '..';
 import { Entity, ForeignKey, SchemaMapping } from './entity';
-import Users from './users';
+import { Users } from './users';
 
 const orderColumns: SchemaMapping<Order> = {
   id: 'id',
@@ -42,7 +42,7 @@ const selectColumnsListProducts = [
   knex.ref(orderColumns.updatedAt).as(orderMapping.updatedAt).withSchema(tabName),
 ];
 
-const Orders: Entity<Order> = {
+export const Orders: Entity<Order> = {
   name: schemaName,
   tableName: tabName,
   column: orderColumns,
