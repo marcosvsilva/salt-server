@@ -1,8 +1,8 @@
 import { Price } from '../../models';
 import knex from '..';
 import { Entity, ForeignKey, SchemaMapping } from './entity';
-import Itens from './itens';
-import Users from './users';
+import { Itens } from './itens';
+import { Users } from './users';
 
 const priceColumns: SchemaMapping<Price> = {
   id: 'id',
@@ -35,7 +35,7 @@ const selectColumnsPrices = [
   knex.ref(priceColumns.updatedAt).as(priceMapping.updatedAt).withSchema(tabName),
 ];
 
-const Prices: Entity<Price> = {
+export const Prices: Entity<Price> = {
   name: schemaName,
   tableName: tabName,
   column: priceColumns,
