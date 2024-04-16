@@ -1,9 +1,6 @@
-import { Knex } from 'knex';
-import { JsonArray, JsonObject, JsonValue } from 'type-fest';
+import { JsonArray, JsonObject } from 'type-fest';
 
-import { Entity } from '../database/entitites/entity';
 import { InterfaceModel } from '../models';
-import { formatReferenceFieldUUId } from './adapter.helper';
 
 export const isValidUUID = (uuidStr: string): boolean => {
   if (uuidStr.length > 0) {
@@ -11,24 +8,6 @@ export const isValidUUID = (uuidStr: string): boolean => {
     return pattern.test(uuidStr);
   }
   return false;
-};
-
-export const isValidReferenceFields = (
-  entity: Entity<InterfaceModel>,
-  params: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>
-): boolean => {
-  let missingValues = true;
-  if (entity.reference && params) {
-    const entities = [...entity.reference] as Entity<InterfaceModel>[];
-    entities.forEach((ent) => {
-      if (missingValues) {
-        const field = formatReferenceFieldUUId(ent) || '';
-        missingValues = !isEmpty(params[field] as string);
-      }
-    });
-  }
-
-  return missingValues;
 };
 
 export const isEmpty = (
@@ -48,4 +27,8 @@ export const isEmpty = (
   }
 
   return false;
+};
+
+export const isNumeric = (strNumeric: string): boolean => {
+  return !strNumeric && !parseFloat(strNumeric);
 };
