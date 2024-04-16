@@ -35,7 +35,7 @@ const selectColumnsListProducts = [
   knex.ref(brandColumns.updatedAt).as(brandMapping.updatedAt).withSchema(tabName),
 ];
 
-const Brands: Entity<Brand> = {
+export const Brands: Entity<Brand> = {
   name: schemaName,
   tableName: tabName,
   column: brandColumns,
