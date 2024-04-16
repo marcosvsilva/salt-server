@@ -53,7 +53,7 @@ export const selectColumnsUsers = [
   knex.ref(userColumns.updatedAt).as(userMaping.updatedAt).withSchema(tabName),
 ];
 
-const Users: Entity<User> = {
+export const Users: Entity<User> = {
   name: schemaName,
   tableName: tabName,
   column: userColumns,
