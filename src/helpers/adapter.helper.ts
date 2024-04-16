@@ -2,15 +2,16 @@ import { Knex } from 'knex';
 import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
-import { DatabaseTable, Entity } from '../database/entitites/entity';
+import { Entity } from '../database/entitites/entity';
+import { InterfaceModel } from '../models';
 
-export const formatReferenceFieldUUId = (entity: Entity<DatabaseTable>): string => {
+export const formatReferenceFieldUUId = (entity: Entity<InterfaceModel>): string => {
   return `${entity.tableName.toLowerCase()}_${entity.mapping.uuid.toLowerCase()}`;
 };
 
 export const formatParams = (
   object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-  entity: Entity<DatabaseTable>
+  entity: Entity<InterfaceModel>
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> => {
   let obj = { ...object };
 
@@ -33,14 +34,6 @@ export const formatParams = (
 
       return acc;
     }, {});
-
-  // References
-  if (entity.reference && object) {
-    entity.reference.forEach((ent) => {
-      const field = formatReferenceFieldUUId(ent);
-      obj[formatReferenceFieldUUId(ent)] = object[field];
-    });
-  }
 
   return obj;
 };
