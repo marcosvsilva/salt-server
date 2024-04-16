@@ -23,5 +23,5 @@ export { deserialize } from './repository.helper';
  * Validation helper functions
  */
 export { isValidUUID } from './validation.helper';
-export { isValidReferenceFields } from './validation.helper';
 export { isEmpty } from './validation.helper';
+export { isNumeric } from './validation.helper';
