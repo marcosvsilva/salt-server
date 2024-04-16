@@ -1,7 +1,7 @@
 import { Payment } from '../../models';
 import knex from '..';
 import { Entity, ForeignKey, SchemaMapping } from './entity';
-import Orders from './orders';
+import { Orders } from './orders';
 
 const paymentColumns: SchemaMapping<Payment> = {
   id: 'id',
@@ -34,7 +34,7 @@ const selectColumnsListProducts = [
   knex.ref(paymentColumns.updatedAt).as(paymentMapping.updatedAt).withSchema(tabName),
 ];
 
-const Payments: Entity<Payment> = {
+export const Payments: Entity<Payment> = {
   name: schemaName,
   tableName: tabName,
   column: paymentColumns,
