@@ -3,9 +3,10 @@ import { JsonObject, JsonValue } from 'type-fest';
 import uuidv6 from 'uuid-with-v6';
 
 import knex from '../database';
-import { DatabaseTable, Entity } from '../database/entitites/entity';
+import { Entity } from '../database/entitites/entity';
+import { InterfaceModel } from '../models';
 
-export const cast = (entry: DatabaseTable, entity: Entity<DatabaseTable>): DatabaseTable => {
+export const cast = (entry: InterfaceModel, entity: Entity<InterfaceModel>): InterfaceModel => {
   return Object.keys(entry).reduce((_obj, key) => {
     const obj = { ..._obj };
 
@@ -22,7 +23,7 @@ export const cast = (entry: DatabaseTable, entity: Entity<DatabaseTable>): Datab
     }
 
     return obj;
-  }, {}) as DatabaseTable;
+  }, {}) as InterfaceModel;
 };
 
 export const getEnumByValue = <T extends string | number>(
@@ -34,7 +35,7 @@ export const getEnumByValue = <T extends string | number>(
 
 export const addIdentifiers = (
   object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-  entity: Entity<DatabaseTable>,
+  entity: Entity<InterfaceModel>,
   defaultUuid: string | undefined = undefined
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> => {
   const obj = { ...object };
@@ -56,7 +57,7 @@ export const addIdentifiers = (
 
 export const addTimestamps = (
   object: JsonObject | Record<string, JsonValue | Knex.Raw | undefined>,
-  entity: Entity<DatabaseTable>,
+  entity: Entity<InterfaceModel>,
   method: 'create' | 'update' = 'update'
 ): JsonObject | Record<string, JsonValue | Knex.Raw | undefined> => {
   const obj = { ...object };
@@ -72,9 +73,9 @@ export const addTimestamps = (
 };
 
 export const deserialize = (
-  data: DatabaseTable | DatabaseTable[],
-  entity: Entity<DatabaseTable>
-): DatabaseTable | DatabaseTable[] => {
+  data: InterfaceModel | InterfaceModel[],
+  entity: Entity<InterfaceModel>
+): InterfaceModel | InterfaceModel[] => {
   if (Array.isArray(data)) {
     return data.map((entry) => cast(entry, entity));
   }
