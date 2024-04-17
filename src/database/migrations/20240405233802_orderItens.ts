@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 
-import { ForeignKey } from '../entitites/entity';
-import OrderItens from '../entitites/orderItem';
+import { ForeignKey, OrderItens } from '../entitites';
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema
@@ -19,7 +18,10 @@ export async function up(knex: Knex): Promise<void> {
         // References
         if (OrderItens.foreignKeys) {
           OrderItens.foreignKeys.forEach((foreignKey: ForeignKey) => {
-            table.uuid(foreignKey.uuid).references(foreignKey.references).inTable(foreignKey.table);
+            table
+              .uuid(foreignKey.attribute)
+              .references(foreignKey.references)
+              .inTable(foreignKey.table);
           });
         }
 
