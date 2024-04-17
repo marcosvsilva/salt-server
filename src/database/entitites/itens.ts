@@ -7,7 +7,7 @@ import { Entity, ForeignKey, SchemaMapping } from './entity';
 const itemColumns: SchemaMapping<Item> = {
   id: 'id',
   uuid: 'uuid',
-  description: 'status',
+  description: 'description',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -22,8 +22,8 @@ const itemMapping: SchemaMapping<Item> = {
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Salt';
-const tabName = 'Itens';
+const schemaName = 'salt';
+const tabName = 'itens';
 
 const selectColumnsListProducts = [
   knex.ref(itemColumns.id).as(itemMapping.id).withSchema(tabName),
