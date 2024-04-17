@@ -22,8 +22,8 @@ const categoryMapping: SchemaMapping<Category> = {
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Salt';
-const tabName = 'Categories';
+const schemaName = 'salt';
+const tabName = 'categories';
 
 const selectColumnsListProducts = [
   knex.ref(categoryColumns.id).as(categoryMapping.id).withSchema(tabName),
