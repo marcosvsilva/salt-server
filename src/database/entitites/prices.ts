@@ -24,8 +24,8 @@ const priceMapping: SchemaMapping<Price> = {
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Salt';
-const tabName = 'Prices';
+const schemaName = 'salt';
+const tabName = 'prices';
 
 const selectColumnsPrices = [
   knex.ref(priceColumns.price).as(priceMapping.price).withSchema(tabName),
