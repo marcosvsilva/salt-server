@@ -34,8 +34,8 @@ const userMaping: SchemaMapping<User> = {
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Salt';
-const tabName = 'Users';
+const schemaName = 'salt';
+const tabName = 'users';
 
 export const selectColumnsUsers = [
   knex.ref(userColumns.id).as(userMaping.id).withSchema(tabName),
