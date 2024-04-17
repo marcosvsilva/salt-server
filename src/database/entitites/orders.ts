@@ -27,8 +27,8 @@ const orderMapping: SchemaMapping<Order> = {
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Salt';
-const tabName = 'Orders';
+const schemaName = 'salt';
+const tabName = 'orders';
 
 const selectColumnsListProducts = [
   knex.ref(orderColumns.id).as(orderMapping.id).withSchema(tabName),
