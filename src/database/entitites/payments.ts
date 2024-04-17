@@ -23,8 +23,8 @@ const paymentMapping: SchemaMapping<Payment> = {
   updatedAt: 'updatedAt',
 };
 
-const schemaName = 'Salt';
-const tabName = 'Payments';
+const schemaName = 'salt';
+const tabName = 'payments';
 
 const selectColumnsListProducts = [
   knex.ref(paymentColumns.value).as(paymentMapping.value).withSchema(tabName),
