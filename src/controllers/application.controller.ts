@@ -1,22 +1,23 @@
 import { Request, Response } from 'express';
 
-import { DatabaseTable, Entity } from '../database/entitites/entity';
+import { Entity } from '../database/entitites/entity';
 import {
   InvalidUUIDException,
   MissingParamsException,
   MissingReferencesFieldsException,
 } from '../exceptions';
 import { getParam, getUUID, isEmpty, isValidUUID } from '../helpers';
+import { InterfaceModel } from '../models';
 import { BaseRepository } from '../repositories/base.repository';
 import { InterfaceRepository } from '../repositories/interface.repository';
 import { InterfaceController } from './interface.controller';
 
 export class ApplicationController implements InterfaceController {
-  private entity: Entity<DatabaseTable>;
+  private entity: Entity<InterfaceModel>;
 
   private repository: InterfaceRepository;
 
-  constructor(entity: Entity<DatabaseTable>) {
+  constructor(entity: Entity<InterfaceModel>) {
     this.entity = entity;
     this.repository = new BaseRepository(this.entity);
   }
@@ -27,12 +28,14 @@ export class ApplicationController implements InterfaceController {
   index = async (req: Request, res: Response): Promise<Response> => {
     try {
       const entries = await this.repository.getAll();
+
       if (entries) {
         if (Array.isArray(entries) && Array.from(entries).length > 0) {
           return res.status(200).json(entries).end();
         }
         return res.status(200).json({}).end();
       }
+
       return res.status(400).end();
     } catch (error) {
       console.error(error);
@@ -55,6 +58,7 @@ export class ApplicationController implements InterfaceController {
       if (!isEmpty(entry)) {
         return res.status(200).json(entry).end();
       }
+
       return res.status(404).end();
     } catch (error) {
       if (error instanceof InvalidUUIDException) {
@@ -73,9 +77,11 @@ export class ApplicationController implements InterfaceController {
 
     try {
       const data = await this.repository.create(params);
+
       if (!isEmpty(data)) {
         return res.status(201).json(data).end();
       }
+
       return res.status(400).end();
     } catch (error) {
       if (
@@ -98,9 +104,11 @@ export class ApplicationController implements InterfaceController {
 
     try {
       const data = await this.repository.update(params, uuid);
+
       if (!isEmpty(data)) {
         return res.status(200).json(data).end();
       }
+
       return res.status(400).end();
     } catch (error) {
       if (error instanceof InvalidUUIDException || error instanceof MissingParamsException) {
@@ -119,9 +127,11 @@ export class ApplicationController implements InterfaceController {
 
     try {
       const removed = await this.repository.delete(uuid);
+
       if (!isEmpty(removed)) {
         return res.status(204).end();
       }
+
       return res.status(400).end();
     } catch (error) {
       if (error instanceof InvalidUUIDException) {
