@@ -1,68 +1,54 @@
 import express, { Request, Response, Router } from 'express';
 
-import { PriceController } from '../controllers/prices.controller';
+import { isNumeric } from '../helpers';
+import brandRouters from './brand.router';
+import categoryRouters from './category.router';
+import itemRouters from './item.router';
+import orderRouters from './order.router';
+import paymentRouters from './payment.router';
+import priceRouters from './price.router';
+import userRouters from './user.router';
 
 const router: Router = express.Router();
 
-/**
- * Lists
- */
+const version = isNumeric(process.env.DB_CLIENT || '1')
+  ? parseInt(process.env.DB_CLIENT || '1', 10)
+  : 1;
 
-// const routerList = '/api/lists';
-// router.get(routerList, listsController.index);
-// router.get(`${routerList}/:uuid`, listsController.show);
-// router.post(routerList, listsController.create);
-// router.put(`${routerList}/:uuid`, listsController.update);
-// router.delete(`${routerList}/:uuid`, listsController.remove);
+const defaultRouter = `/api/v${version}`;
 
 /**
- * Users
+ * Entities
  */
 
-// const routerUser = '/api/users';
-// router.get(routerUser, usersController.index);
-// router.get(`${routerUser}/:uuid`, usersController.show);
-// router.post(routerUser, usersController.create);
-// router.put(`${routerUser}/:uuid`, usersController.update);
-// router.delete(`${routerUser}/:uuid`, usersController.remove);
+// Brand
+router.use(defaultRouter, brandRouters);
 
-/**
- * Products
- */
+// Category
+router.use(defaultRouter, categoryRouters);
 
-// const routerProducts = '/api/products';
-// router.get(routerProducts, productsController.index);
-// router.get(`${routerProducts}/:uuid`, productsController.show);
-// router.post(routerProducts, productsController.create);
-// router.put(`${routerProducts}/:uuid`, productsController.update);
-// router.delete(`${routerProducts}/:uuid`, productsController.remove);
+// Item
+router.use(defaultRouter, itemRouters);
 
-/**
- * Prices
- */
+// Order
+router.use(defaultRouter, orderRouters);
 
-// Create an instance of PriceController
-const priceController = new PriceController();
-const routerPrices = '/api/prices';
+// Payment
+router.use(defaultRouter, paymentRouters);
 
-// GET /api/prices
-router.get(routerPrices, priceController.index);
+// Price
+router.use(defaultRouter, priceRouters);
 
-// GET /api/prices/:uuid
-router.get(`${routerPrices}/:uuid`, priceController.show);
-
-// POST /api/prices
-router.post(routerPrices, priceController.create);
-
-// PUT /api/prices/:uuid
-router.put(`${routerPrices}/:uuid`, priceController.update);
-
-// DELETE /api/prices/:uuid
-router.delete(`${routerPrices}/:uuid`, priceController.delete);
+// User
+router.use(defaultRouter, userRouters);
 
 /**
  * Root
  */
+
+router.get(`${defaultRouter}/`, (req: Request, res: Response) =>
+  res.status(200).json({ message: 'Salt Software' })
+);
 
 router.get('/', (req: Request, res: Response) =>
   res.status(200).json({ message: 'Salt Software' })
