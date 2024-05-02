@@ -3,19 +3,8 @@ import { JsonObject, JsonValue } from 'type-fest';
 
 import knex from '../database';
 import { Entity } from '../database/entitites/entity';
-import {
-  InvalidUUIDException,
-  MissingParamsException,
-  MissingReferencesFieldsException,
-} from '../exceptions';
-import {
-  addIdentifiers,
-  addTimestamps,
-  deserialize,
-  formatParams,
-  isValidReferenceFields,
-  isValidUUID,
-} from '../helpers';
+import { InvalidUUIDException, MissingParamsException } from '../exceptions';
+import { addIdentifiers, addTimestamps, deserialize, formatParams, isValidUUID } from '../helpers';
 import { InterfaceModel } from '../models';
 import { InterfaceRepository, Where } from './interface.repository';
 
@@ -85,11 +74,6 @@ export class BaseRepository implements InterfaceRepository {
     let newParams = formatParams(params, this.entity);
     newParams = addTimestamps(newParams, this.entity, 'create');
     newParams = addIdentifiers(newParams, this.entity);
-
-    const checkReferences = isValidReferenceFields(this.entity, params);
-    if (!checkReferences) {
-      throw new MissingReferencesFieldsException();
-    }
 
     const uuid = params[this.entity.mapping.uuid] as string;
     return knex
