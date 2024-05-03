@@ -1,8 +1,8 @@
 # Salt Software - Backend
 
-Welcome to Salt Software, the bar and pub ordering platform. This platform aims to connect customers with bars and pubs in an intelligent and interactive manner, enabling customers to place orders directly with the establishment and receive them at the table without the need for human interaction.
+Welcome to Salt Software, the premier ordering platform designed specifically for bars and pubs. Our platform seamlessly connects patrons with their favorite drinking establishments, enabling an intelligent and interactive ordering experience. Customers can conveniently place orders directly to the bar or pub and enjoy the convenience of having their drinks delivered right to their table, all without any human interaction required.
 
-This repository is responsible for the backend project.
+This repository hosts the backend project for Salt Software, powering the core functionality that makes this innovative service possible.
 
 ## Stacks
 
